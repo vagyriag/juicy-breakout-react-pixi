@@ -1,5 +1,6 @@
 import { Sprite, Graphics, Application, Texture } from "pixi.js";
 import Victor from "victor";
+import { isTouchingReturnType } from "../isTouching";
 
 export class Ball extends Sprite {
 
@@ -24,6 +25,12 @@ export class Ball extends Sprite {
     this.pivot.set(wH, hH);
     this.inStage = false;
     this.vel = new Victor(0, 0);
+  }
+
+  bounce (touch: isTouchingReturnType) {
+    const { top, right, bottom, left } = touch;
+    if(top || bottom) this.vel.y *= -1;
+    if(left || right) this.vel.x *= -1;
   }
 
   release () {
