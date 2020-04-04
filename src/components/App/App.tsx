@@ -1,8 +1,9 @@
 import React from 'react';
+import Game from '../../game/Game';
 
 const App = () => {
   return (
-    <div></div>
+    <Game />
   );
 }
 
