@@ -19,14 +19,16 @@ export const initGame = () => {
 
   const setup = () => {
     const { width, height } = app.view;
-    
+
     bricks = setupBricks(app, width * .8, height * .35, 8, 6, 20);
     bricks.position.set(width * .1, width * .1);
 
     Ball.createTexture(app, 0xccf111, 20);
-    ball = new Ball(100, 100);
+    ball = new Ball();
 
     paddle = new Paddle(app, 0xcc1111, app.view.width * .15, 30);
+
+    paddle.positionBall(ball);
 
     group.addChild(paddle);
     group.addChild(bricks);

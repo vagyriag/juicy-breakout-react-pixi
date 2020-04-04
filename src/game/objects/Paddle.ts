@@ -1,4 +1,5 @@
 import { Container, Application, Graphics, Sprite } from 'pixi.js';
+import { Ball } from './Ball';
 
 export class Paddle extends Container {
 
@@ -20,5 +21,9 @@ export class Paddle extends Container {
 
   move (x: number) {
     this.x = x;
+  }
+
+  positionBall (ball: Ball) {
+    ball.position.set(this.x, this.y - 20);
   }
 }
