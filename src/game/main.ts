@@ -65,6 +65,7 @@ export const initGame = () => {
   const handleMouseClick = (event: interaction.InteractionEvent) => {
     ball.getGlobalPosition().copyTo(ball.position);
     app.stage.addChild(ball);
+    ball.release();
   }
 
   setup();
