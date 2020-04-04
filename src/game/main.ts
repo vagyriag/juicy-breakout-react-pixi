@@ -19,20 +19,24 @@ export const initGame = () => {
 
   const setup = () => {
     const { width, height } = app.view;
-
-    bricks = setupBricks(app, width * .8, height * .35, 8, 6, 20);
+    
+    // setup bricks
+    bricks = setupBricks(app, 0xcc11cc, width * .8, height * .35, 8, 6, 20);
     bricks.position.set(width * .1, width * .1);
-
+    
+    // setup paddle
+    Paddle.createTexture(app, 0xcc1111, width * .15, 30);
+    paddle = new Paddle();
+    paddle.position.set(width * .5, height - 60);
+    
+    // setup ball
     Ball.createTexture(app, 0xccf111, 20);
     ball = new Ball();
+    paddle.addBall(ball);
 
-    paddle = new Paddle(app, 0xcc1111, app.view.width * .15, 30);
-
-    paddle.positionBall(ball);
-
+    // add all to group
     group.addChild(paddle);
     group.addChild(bricks);
-    group.addChild(ball);
 
     app.stage.addChild(group);
 
@@ -56,12 +60,12 @@ export const initGame = () => {
   return app;
 }
 
-const setupBricks = (app: Application, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
+const setupBricks = (app: Application, color: number, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
   const bricksW = (groupW - padding * (numX - 1)) / numX;
   const bricksH = (groupH - padding * (numY - 1)) / numY;
   const bricks = new Container();
 
-  Brick.createTexture(app, 0xcc11cc, bricksW, bricksH);
+  Brick.createTexture(app, color, bricksW, bricksH);
   Array
     .from({ length: numX * numY })
     .forEach((_, index: number) => {
