@@ -4,6 +4,8 @@ export class Ball extends Sprite {
 
   static tx: Texture;
 
+  inStage: boolean;
+
   static createTexture (app: Application, color: number, size: number) {
     const gr = new Graphics();
     gr.beginFill(color)
@@ -17,5 +19,14 @@ export class Ball extends Sprite {
     const wH = Ball.tx.width * .5;
     const hH = Ball.tx.height * .5;
     this.pivot.set(wH, hH);
+    this.inStage = false;
+  }
+
+  setInStage () {
+    this.inStage = true;
+  }
+
+  process () {
+    if(!this.inStage) return;
   }
 }
