@@ -15,8 +15,9 @@ export class Paddle extends Sprite {
 
   constructor () {
     super(Paddle.tx);
-    const wH = Paddle.tx.width * .5;
-    const hH = Paddle.tx.height * .5;
+    const box = this.getBounds();
+    const wH = box.width * .5;
+    const hH = box.height * .5;
     this.pivot.set(wH, hH);
   }
 
@@ -25,7 +26,7 @@ export class Paddle extends Sprite {
   }
 
   addBall (ball: Ball) {
+    ball.position.set(this.getBounds().width * .5, ball.getBounds().height * -.5);
     this.addChild(ball);
-    ball.position.set(Paddle.tx.width * .5, Ball.tx.height * -.5);
   }
 }

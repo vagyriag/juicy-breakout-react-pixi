@@ -14,8 +14,9 @@ export class Brick extends Sprite {
 
   constructor (x: number, y: number) {
     super(Brick.tx);
-    const wH = Brick.tx.width * .5;
-    const hH = Brick.tx.height * .5;
+    const box = this.getBounds();
+    const wH = box.width * .5;
+    const hH = box.height * .5;
     this.pivot.set(wH, hH);
     this.position.set(x + wH, y + hH);
   }

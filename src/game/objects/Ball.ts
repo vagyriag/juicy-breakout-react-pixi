@@ -18,8 +18,9 @@ export class Ball extends Sprite {
 
   constructor () {
     super(Ball.tx);
-    const wH = Ball.tx.width * .5;
-    const hH = Ball.tx.height * .5;
+    const box = this.getBounds();
+    const wH = box.width * .5;
+    const hH = box.height * .5;
     this.pivot.set(wH, hH);
     this.inStage = false;
     this.vel = new Victor(0, 0);
