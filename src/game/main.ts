@@ -1,8 +1,9 @@
-import { Ticker, Application, Container, interaction, Graphics, Sprite } from 'pixi.js';
+import { Ticker, Application, Container, interaction, Graphics, Sprite, Rectangle } from 'pixi.js';
 import { Paddle } from './objects/Paddle';
 import { Ball } from './objects/Ball';
 import { setupBricks } from './utils/setupBricks';
 import { isTouching } from './isTouching';
+import { setupSides } from './utils/setupSides';
 
 export const initGame = () => {
   
@@ -15,21 +16,25 @@ export const initGame = () => {
 
   const group = new Container();
   var paddle: Paddle;
-  var bricks: Container;
+  var bricks = new Container();
   var ball: Ball;
+  var sides = new Container();
 
   const setup = () => {
     const { width, height } = app.view;
 
     // background
-    const bg = new Graphics();
-    bg.beginFill(0x000000)
+    const bg = new Graphics()
+      .beginFill(0x000000)
       .drawRect(0, 0, width, height)
       .endFill();
     app.stage.addChild(bg);
 
+    //sides
+    setupSides(app, sides, 30, 0x11cccc);
+
     // setup bricks
-    bricks = setupBricks(app, 0xcc11cc, width * .8, height * .35, 8, 6, 20);
+    bricks = setupBricks(app, bricks, 0xcc11cc, width * .8, height * .35, 8, 6, 20);
     bricks.position.set(width * .1, width * .1);
     group.addChild(bricks);
     
@@ -57,10 +62,6 @@ export const initGame = () => {
 
   const process = () => {
     ball.process();
-    // TODO: remove
-    if(ball.position.x < 0 || ball.position.x > app.stage.width || ball.position.y < 0){
-      ball.inStage = false;
-    }
     bricks.children.forEach(brick => {
       const touch = isTouching(brick, ball);
       if(touch){
@@ -73,6 +74,14 @@ export const initGame = () => {
         app.stage.addChild(s);
       }
     });
+
+    sides.children.forEach(side => {
+      const touch = isTouching(side, ball);
+      if(touch) ball.bounce(touch);
+    });
+
+    const touchPaddle = isTouching(paddle, ball);
+    if(touchPaddle) ball.bounce(touchPaddle);
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {

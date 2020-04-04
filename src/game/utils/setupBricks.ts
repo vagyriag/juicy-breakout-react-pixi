@@ -1,10 +1,9 @@
 import { Application, Container } from "pixi.js";
 import { Brick } from "../objects/Brick";
 
-export const setupBricks = (app: Application, color: number, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
+export const setupBricks = (app: Application, bricks: Container, color: number, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
   const bricksW = (groupW - padding * (numX - 1)) / numX;
   const bricksH = (groupH - padding * (numY - 1)) / numY;
-  const bricks = new Container();
 
   Brick.createTexture(app, color, bricksW, bricksH);
   Array
