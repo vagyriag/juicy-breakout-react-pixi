@@ -9,14 +9,15 @@ export class Brick extends Sprite {
     gr.beginFill(color)
       .drawRect(0, 0, width, height)
       .endFill();
-console.log('x')
     this.tx = app.renderer.generateTexture(gr, 1, 1);
   }
 
   constructor (x: number, y: number) {
     super(Brick.tx);
-    //this.pivot.set(Brick.tx.width * .5, Brick.tx.height * .5);
-    this.position.set(x, y);
+    const wH = Brick.tx.width * .5;
+    const hH = Brick.tx.height * .5;
+    this.pivot.set(wH, hH);
+    this.position.set(x + wH, y + hH);
   }
   
 }

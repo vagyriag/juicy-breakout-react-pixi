@@ -1,6 +1,7 @@
 import { Ticker, Application, Container, interaction } from 'pixi.js';
 import { Paddle } from './objects/Paddle';
 import { Brick } from './objects/Brick';
+import { Ball } from './objects/Ball';
 
 export const initGame = () => {
   
@@ -13,15 +14,23 @@ export const initGame = () => {
 
   const group = new Container();
   var paddle: Paddle;
-  const bricks = new Container();
+  var bricks: Container;
+  var ball: Ball;
 
   const setup = () => {
-    setupBricks();
+    const { width, height } = app.view;
+    
+    bricks = setupBricks(app, width * .8, height * .35, 8, 6, 20);
+    bricks.position.set(width * .1, width * .1);
+
+    Ball.createTexture(app, 0xccf111, 20);
+    ball = new Ball(100, 100);
 
     paddle = new Paddle(app, 0xcc1111, app.view.width * .15, 30);
 
     group.addChild(paddle);
     group.addChild(bricks);
+    group.addChild(ball);
 
     app.stage.addChild(group);
 
@@ -34,26 +43,7 @@ export const initGame = () => {
     ticker.start();
   }
 
-  const setupBricks = () => {
-    const { width, height } = app.view;
-    const bricksNumX = 8;
-    const bricksNumY = 6;
-    const bricksPad = 20;
-    const bricksW = (width * .8 - bricksPad * (bricksNumX - 1)) / bricksNumX;
-    const bricksH = (height * .35 - bricksPad * (bricksNumY - 1)) / bricksNumY;
-
-    Brick.createTexture(app, 0xcc11cc, bricksW, bricksH);
-    Array
-      .from({ length: bricksNumX * bricksNumY })
-      .forEach((_, index: number) => {
-        const y = Math.floor(index / bricksNumX);
-        const x = index - y * bricksNumX;
-        const brick = new Brick(x * (bricksW + bricksPad), y * (bricksH + bricksPad));
-        bricks.addChild(brick);
-      });
-
-    bricks.position.set(width * .1, width * .1);
-  }
+  
 
   const process = () => {
 
@@ -62,4 +52,22 @@ export const initGame = () => {
   setup();
 
   return app;
+}
+
+const setupBricks = (app: Application, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
+  const bricksW = (groupW - padding * (numX - 1)) / numX;
+  const bricksH = (groupH - padding * (numY - 1)) / numY;
+  const bricks = new Container();
+
+  Brick.createTexture(app, 0xcc11cc, bricksW, bricksH);
+  Array
+    .from({ length: numX * numY })
+    .forEach((_, index: number) => {
+      const y = Math.floor(index / numX);
+      const x = index - y * numX;
+      const brick = new Brick(x * (bricksW + padding), y * (bricksH + padding));
+      bricks.addChild(brick);
+    });
+
+  return bricks;
 }
