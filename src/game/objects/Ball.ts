@@ -49,13 +49,20 @@ export class Ball extends Sprite {
       // if touch add to touched array
       paddle.justTouched.push(this);
       
-      const maxAng = Math.PI * .1;
+      const maxAngMod = Math.PI * .1;
       const maxDiff = paddle.getBounds().width * .5 + this.getBounds().width * .5;
       const diff = this.position.x - paddle.position.x;
       const diffNormal = diff / maxDiff;
-      const rot = maxAng * diffNormal;
+      const rot = maxAngMod * diffNormal;
       this.vel.invertY();
       this.vel.rotate(rot);
+
+      const maxAngMult = .18;
+      const maxAng = Math.PI * maxAngMult;
+      const minAng = Math.PI * (maxAngMult - 1);
+      const ang = this.vel.angle();
+      if(ang > maxAng) this.vel.rotateBy(maxAng);
+      if(ang < minAng) this.vel.rotateBy(minAng);
     }
     
     // if alreadyTouched and is far enough remove from touched array
