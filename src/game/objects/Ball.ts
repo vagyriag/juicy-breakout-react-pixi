@@ -10,6 +10,8 @@ export class Ball extends Sprite {
   inStage: boolean;
   vel: Victor;
 
+  logAngles = false;
+
   static createTexture(app: Application, color: number, size: number) {
     const gr = new Graphics();
     gr.beginFill(color)
@@ -54,15 +56,21 @@ export class Ball extends Sprite {
       const diff = this.position.x - paddle.position.x;
       const diffNormal = diff / maxDiff;
       const rot = maxAngMod * diffNormal;
-      this.vel.invertY();
-      this.vel.rotate(rot);
 
-      const maxAngMult = .18;
+      if(this.logAngles) console.log('\n\nincoming: ', Math.round(this.vel.angleDeg()));
+      this.vel.invertY();
+      if(this.logAngles) console.log('inverted: ', Math.round(this.vel.angleDeg()));
+      this.vel.rotate(rot);
+      if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(this.vel.angleDeg()));
+
+      const maxAngMult = -.18;
       const maxAng = Math.PI * maxAngMult;
-      const minAng = Math.PI * (maxAngMult - 1);
+      const minAng = Math.PI * -(1 + maxAngMult);
       const ang = this.vel.angle();
-      if(ang > maxAng) this.vel.rotateBy(maxAng);
-      if(ang < minAng) this.vel.rotateBy(minAng);
+      if(ang > maxAng) this.vel.rotate((ang - maxAng) * -1);
+      if(ang < minAng) this.vel.rotate((ang - minAng) * -1);
+
+      if(this.logAngles) console.log('final: ', Math.round(this.vel.angleDeg()), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
     }
     
     // if alreadyTouched and is far enough remove from touched array

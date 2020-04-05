@@ -77,11 +77,11 @@ export const initGame = () => {
       }
     });
 
-    const p = new Graphics()
+    /*const p = new Graphics()
           .beginFill(0xffffff)
           .drawCircle(ball.position.x, ball.position.y, 5)
           .endFill();
-        extra.addChild(p);
+        extra.addChild(p);*/
 
     sides.children.forEach(side => {
       const touch = isTouching(side, ball);
@@ -90,15 +90,11 @@ export const initGame = () => {
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {
-    if(!ball.inStage) return; // TODO: remove
     paddle.move(event.data.global.x);
   }
 
   const handleMouseClick = (event: interaction.InteractionEvent) => {
-    if(ball.inStage) { // TODO: remove
-      ball.inStage = false;
-      return;
-    }
+    if(ball.inStage) return;
     ball.getGlobalPosition().copyTo(ball.position);
     app.stage.addChild(ball);
     ball.release();
