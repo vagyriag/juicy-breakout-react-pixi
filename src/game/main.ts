@@ -4,6 +4,9 @@ import { Ball } from './objects/Ball';
 import { setupBricks } from './utils/setupBricks';
 import { isTouching } from './isTouching';
 import { setupSides } from './utils/setupSides';
+import { setTransition } from './utils/setTransition';
+import { Vector } from './utils/Vector';
+import { Ease } from './utils/Ease';
 
 export const initGame = () => {
   
@@ -41,17 +44,30 @@ export const initGame = () => {
     bricks = setupBricks(app, bricks, 0xcc11cc, width * .8, height * .35, 8, 6, 20);
     bricks.position.set(width * .1, width * .1);
     group.addChild(bricks);
+
+    // setup ball
+    Ball.createTexture(app, 0xccf111, 20);
+    ball = new Ball();
     
     // setup paddle
     Paddle.createTexture(app, 0xcc1111, width * .15, 30);
     paddle = new Paddle();
     paddle.position.set(width * .5, height - 60);
-    group.addChild(paddle);
-    
-    // setup ball
-    Ball.createTexture(app, 0xccf111, 20);
-    ball = new Ball();
     paddle.addBall(ball);
+    group.addChild(paddle);
+    setTransition(paddle, {
+      enter: {
+        position: new Vector(paddle.position).add(0, 300),
+        scale: new Vector(.3, .3),
+      },
+      exit: {
+        position: new Vector(paddle.position),
+        scale: new Vector(1, 1),
+      },
+      duration: 500,
+      delay: 700,
+      easingFunction: Ease.out(3),
+    });
 
     // add group to stage
     app.stage.addChild(group);
