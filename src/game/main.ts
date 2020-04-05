@@ -91,7 +91,7 @@ export const initGame = () => {
       const touch = isTouching(brick, ball);
       if(touch){
         ball.bounce(touch);
-        brick.destroy();
+        bricks.removeChild(brick);
       }
     });
 

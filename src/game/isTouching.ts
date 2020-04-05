@@ -9,6 +9,7 @@ export interface isTouchingReturnType {
 }
 
 export const isTouching = (objA: DisplayObject, objB: DisplayObject, type: 0|1 = 0): isTouchingReturnType|false => {
+  if(!objA.renderable || !objB.renderable) return false;
   const boxA = objA.getBounds();
   const boxB = objB.getBounds();
   const touch = isTouchingBox(boxA, boxB);
