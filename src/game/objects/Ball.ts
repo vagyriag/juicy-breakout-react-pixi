@@ -1,14 +1,15 @@
 import { Sprite, Graphics, Application, Texture } from "pixi.js";
-import Victor from "victor";
 import { isTouchingReturnType, isTouching } from "../isTouching";
 import { Paddle } from "./Paddle";
+import { radToDeg } from "../utils/radToDeg";
+import { Vector } from "../utils/Vector";
 
 export class Ball extends Sprite {
 
   static tx: Texture;
 
   inStage: boolean;
-  vel: Victor;
+  vel: Vector;
 
   logAngles = false;
 
@@ -27,13 +28,13 @@ export class Ball extends Sprite {
     const hH = box.height * .5;
     this.pivot.set(wH, hH);
     this.inStage = false;
-    this.vel = new Victor(0, 0);
+    this.vel = new Vector();
   }
 
   bounce(touch: isTouchingReturnType) {
     const { top, right, bottom, left } = touch;
-    if(top || bottom) this.vel.invertY();
-    if(left || right) this.vel.invertX();
+    if(top || bottom) this.vel.y *= -1;
+    if(left || right) this.vel.x *= -1;
   }
 
   release() {
@@ -57,27 +58,27 @@ export class Ball extends Sprite {
       const diffNormal = diff / maxDiff;
       const rot = maxAngMod * diffNormal;
 
-      if(this.logAngles) console.log('\n\nincoming: ', Math.round(this.vel.angleDeg()));
-      this.vel.invertY();
-      if(this.logAngles) console.log('inverted: ', Math.round(this.vel.angleDeg()));
+      if(this.logAngles) console.log('\n\nincoming: ', Math.round(radToDeg(this.vel.heading())));
+      this.vel.y *= -1;
+      if(this.logAngles) console.log('inverted: ', Math.round(radToDeg(this.vel.heading())));
       this.vel.rotate(rot);
-      if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(this.vel.angleDeg()));
+      if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(radToDeg(this.vel.heading())));
 
       const maxAngMult = -.18;
       const maxAng = Math.PI * maxAngMult;
       const minAng = Math.PI * -(1 + maxAngMult);
-      const ang = this.vel.angle();
+      const ang = this.vel.heading();
       if(ang > maxAng) this.vel.rotate((ang - maxAng) * -1);
       if(ang < minAng) this.vel.rotate((ang - minAng) * -1);
 
-      if(this.logAngles) console.log('final: ', Math.round(this.vel.angleDeg()), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
+      if(this.logAngles) console.log('final: ', Math.round(radToDeg(this.vel.heading())), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
     }
     
     // if alreadyTouched and is far enough remove from touched array
-    if(alreadyTouched && Victor.fromObject(this.position).distance(Victor.fromObject(paddle.position)) > 150){
+    if(alreadyTouched && Vector.dist(new Vector(this.position), new Vector(paddle.position)) > 150){
       paddle.justTouched = paddle.justTouched.filter(b => b !== this);
     }
-
-    this.position.set(...Victor.fromObject(this.position).add(this.vel).toArray());
+    
+    this.position.set(...new Vector(this.position).add(this.vel).array());
   }
 }
