@@ -4,7 +4,7 @@ export class Brick extends Sprite {
 
   static tx: Texture;
 
-  static createTexture (app: Application, color: number, width: number, height: number) {
+  static createTexture(app: Application, color: number, width: number, height: number) {
     const gr = new Graphics();
     gr.beginFill(color)
       .drawRect(0, 0, width, height)
@@ -12,7 +12,7 @@ export class Brick extends Sprite {
     this.tx = app.renderer.generateTexture(gr, 1, 1);
   }
 
-  constructor (x: number, y: number) {
+  constructor(x: number, y: number) {
     super(Brick.tx);
     const box = this.getBounds();
     const wH = box.width * .5;
