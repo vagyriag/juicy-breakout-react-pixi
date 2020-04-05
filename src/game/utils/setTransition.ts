@@ -8,8 +8,18 @@ interface params {
   alpha?: number;
 }
 
-export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: params, duration: number, easingFunction?: (t: number) => number) => {
+interface Options {
+  enter: params;
+  exit: params;
+  duration: number;
+  delay?: number;
+  autoStart?: boolean;
+  easingFunction?: (t: number) => number;
+}
 
+export const setTransition = (obj: DisplayObject, options: Options) => {
+
+  const { enter, exit, duration, delay, autoStart, easingFunction } = options;
   const ticker = new Ticker();
   let initialTime: number;
   
@@ -20,6 +30,14 @@ export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: param
   const doRotation = typeof enter.rotation === 'number' && typeof exit.rotation === 'number';
   const doAlpha    = typeof enter.alpha === 'number' && typeof exit.alpha === 'number';
   const doNothing  = !doPosition && !doScale && !doRotation && !doAlpha;
+
+  const run = () => {
+    // start if has delay or autoStart
+    if((delay && delay > 0) || autoStart) {
+      init();
+      setTimeout(() => start(), delay || 0);
+    }
+  }
 
   const start = () => {
     if(doNothing) return;
@@ -68,6 +86,9 @@ export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: param
     if(doRotation) obj.rotation = src.rotation!;
     if(doAlpha)    obj.alpha = src.alpha!;
   }
+
+  //
+  run();
 
   return { init, start };
 
