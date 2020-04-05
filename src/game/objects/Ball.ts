@@ -45,10 +45,16 @@ export class Ball extends Sprite {
   process(paddle: Paddle) {
     if(!this.inStage) return;
 
-    const touch = isTouching(paddle, this);
+    const touch = isTouching(paddle, this, 1);
     const alreadyTouched = paddle.justTouched.find(b => b === this);
 
-    if(touch && !alreadyTouched){
+    if(touch && !touch.top && !alreadyTouched) {
+      // if touch add to touched array
+      paddle.justTouched.push(this);
+      this.bounce(touch);
+    }
+
+    if(touch && touch.top && !alreadyTouched){
       // if touch add to touched array
       paddle.justTouched.push(this);
       
