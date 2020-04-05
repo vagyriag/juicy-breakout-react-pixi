@@ -1,4 +1,5 @@
 import { DisplayObject, Rectangle } from "pixi.js"
+import { Vector } from "./utils/Vector";
 
 export interface isTouchingReturnType {
   top: boolean;
@@ -7,37 +8,31 @@ export interface isTouchingReturnType {
   left: boolean;
 }
 
-const innerBoxSize = 5;
-
 export const isTouching = (objA: DisplayObject, objB: DisplayObject): isTouchingReturnType|false => {
   const boxA = objA.getBounds();
   const boxB = objB.getBounds();
   const touch = isTouchingBox(boxA, boxB);
   if(touch){
-    const a = getSurroundingBoxes(boxA);
-    const b = getSurroundingBoxes(boxB);
+    const vectorA = Vector.fromBox(boxA);
+    const vectorB = Vector.fromBox(boxB);
+    const angle = Vector.sub(vectorB, vectorA).heading();
+
+    const leftTop = new Vector(boxA.x - boxB.width * .5, boxA.y - boxB.height * .5);
+    const rightTop = new Vector(boxA.x + boxA.width + boxB.width * .5, boxA.y - boxB.height * .5);
+    
+    const leftTopAng = Vector.sub(leftTop, vectorA).heading();
+    const rightTopAng = Vector.sub(rightTop, vectorA).heading();
+    const leftBottomAng = leftTopAng * -1;
+    const rightBottomAng = rightTopAng * -1;
+    
     return { 
-      top: isTouchingBox(a.top, b.bottom),
-      right: isTouchingBox(a.right, b.left),
-      bottom: isTouchingBox(a.bottom, b.top),
-      left: isTouchingBox(a.left, b.right),
+      top:    angle >= leftTopAng && angle < rightTopAng,
+      right:  angle >= rightTopAng && angle < rightBottomAng,
+      bottom: angle >= rightBottomAng && angle < leftBottomAng,
+      left:   angle >= leftBottomAng || angle < leftTopAng,
     }
   }
   return false;
-}
-
-const getSurroundingBoxes = (box: Rectangle) => {
-  const top = box.clone();
-  top.height = innerBoxSize;
-  const right = box.clone();
-  right.width = innerBoxSize;
-  right.x += box.width - innerBoxSize;
-  const bottom = box.clone();
-  bottom.height = innerBoxSize;
-  bottom.y += box.height - innerBoxSize;
-  const left = box.clone();
-  left.width = innerBoxSize;
-  return { top, right, bottom, left };
 }
 
 const isTouchingBox = (boxA: Rectangle, boxB: Rectangle) => {
