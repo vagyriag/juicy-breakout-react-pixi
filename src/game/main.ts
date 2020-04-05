@@ -62,6 +62,7 @@ export const initGame = () => {
     app.stage.interactive = true;
     app.stage.on('mousemove', handleMouseMove);
     app.stage.on('mousedown', handleMouseClick);
+    app.renderer.plugins.interaction.cursorStyles.default = 'none';
 
     ticker.add(process);
     ticker.start();
