@@ -50,7 +50,7 @@ export const initGame = () => {
     ball = new Ball();
     
     // setup paddle
-    Paddle.createTexture(app, 0xcc1111, width * .15, 30);
+    Paddle.createTexture(app, 0xcc1111, width * .15, 40);
     paddle = new Paddle();
     paddle.position.set(width * .5, height - 60);
     paddle.addBall(ball);
@@ -86,6 +86,7 @@ export const initGame = () => {
 
   const process = () => {
     ball.process(paddle);
+    paddle.process();
 
     bricks.children.forEach(brick => {
       const touch = isTouching(brick, ball);

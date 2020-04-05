@@ -1,5 +1,6 @@
 import { Application, Graphics, Sprite, Texture } from 'pixi.js';
 import { Ball } from './Ball';
+import { pI } from '../utils/pI';
 
 export class Paddle extends Sprite {
 
@@ -24,7 +25,15 @@ export class Paddle extends Sprite {
   }
 
   move(x: number) {
+    const mov = Math.abs(this.x - x);
+    const max = 60;
+    this.scale.x = pI.map(mov, 0, max, 1, 1.6, true);
+    this.scale.y = pI.map(mov, 0, max, 1, 0.6, true);
     this.x = x;
+  }
+
+  process() {
+    this.scale.set(1, 1);
   }
 
   addBall(ball: Ball) {
