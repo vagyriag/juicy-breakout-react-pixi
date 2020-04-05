@@ -1,8 +1,9 @@
 import { Brick } from "../objects/Brick";
-import { Application, Graphics, TextStyle, Text, interaction, Sprite } from "pixi.js";
+import { Application, Graphics, TextStyle, Text, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { Vector } from "./Vector";
 import { pI } from "./pI";
+import { getTouchingSidesInfo } from "../isTouching";
 
 export const setupAngleTest = (app: Application) => {
   const { width, height } = app.view;
@@ -29,26 +30,16 @@ export const setupAngleTest = (app: Application) => {
     const boxA = objA.getBounds();
     const boxB = objB.getBounds();
 
-    const vectorA = Vector.fromBox(boxA);
-    const vectorB = Vector.fromBox(boxB);
-    const angle = Vector.sub(vectorB, vectorA).heading();
+    const { angle, leftTopAng, rightTopAng, leftBottomAng, rightBottomAng, vectorA, sides } = getTouchingSidesInfo(boxA, boxB, 1);
 
-    const leftTop = new Vector(boxA.x - boxB.width * .5, boxA.y - boxB.height * .5);
-    const rightTop = new Vector(boxA.x + boxA.width + boxB.width * .5, boxA.y - boxB.height * .5);
+    const size = 200;
+    const leftTop = Vector.fromAngle(leftTopAng).mult(size).add(vectorA);
+    const rightTop = Vector.fromAngle(rightTopAng).mult(size).add(vectorA);
+    const leftBottom = Vector.fromAngle(leftBottomAng).mult(size).add(vectorA);
+    const rightBottom = Vector.fromAngle(rightBottomAng).mult(size).add(vectorA);
 
-    const leftBottom = new Vector(boxA.x - boxB.width * .5, boxA.y + boxA.height + boxB.height * .5);
-    const rightBottom = new Vector(boxA.x + boxA.width + boxB.width * .5, boxA.y + boxA.height + boxB.height * .5);
-    
-    const leftTopAng = Vector.sub(leftTop, vectorA).heading();
-    const rightTopAng = Vector.sub(rightTop, vectorA).heading();
-    const leftBottomAng = leftTopAng * -1;
-    const rightBottomAng = rightTopAng * -1;
-
-    let side = '';
-    if(angle >= leftTopAng && angle < rightTopAng) side = 'top';
-    if(angle >= rightTopAng && angle < rightBottomAng) side = 'right';
-    if(angle >= rightBottomAng && angle < leftBottomAng) side = 'bottom';
-    if(angle >= leftBottomAng || angle < leftTopAng) side = 'left';
+    // @ts-ignore
+    let side = Object.keys(sides).find(k => sides[k]);
 
     gr.removeChildren();
     gr.clear()

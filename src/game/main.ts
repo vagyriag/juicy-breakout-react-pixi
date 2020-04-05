@@ -4,7 +4,6 @@ import { Ball } from './objects/Ball';
 import { setupBricks } from './utils/setupBricks';
 import { isTouching } from './isTouching';
 import { setupSides } from './utils/setupSides';
-import { setupAngleTest } from './utils/setupAngleTest';
 
 export const initGame = () => {
   
@@ -35,7 +34,7 @@ export const initGame = () => {
     app.stage.addChild(bg);
 
     //sides
-    setupSides(app, sides, 300, 0x11cccc);
+    setupSides(app, sides, 30, 0x11cccc);
     app.stage.addChild(sides);
 
     // setup bricks
@@ -86,7 +85,7 @@ export const initGame = () => {
         extra.addChild(p);*/
 
     sides.children.forEach(side => {
-      const touch = isTouching(side, ball);
+      const touch = isTouching(side, ball, 1);
       if(touch) console.log(touch);
       if(touch) ball.bounce(touch);
     });
@@ -103,8 +102,7 @@ export const initGame = () => {
     ball.release();
   }
 
-  //setup();
-  setupAngleTest(app);
+  setup();
 
   return app;
 }
