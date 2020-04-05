@@ -22,11 +22,11 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
           }, {
             pos: new Vector(brick.position),
           }, 
-          400 + Math.random() * 200
+          2000
         );
         transition.start();
         bricks.addChild(brick);
-      }, Math.random() * 300)
+      });
     });
 
   return bricks;
