@@ -39,7 +39,10 @@ export class Ball extends Sprite {
 
   release() {
     this.inStage = true;
-    this.vel.y = -10;
+    this.vel = new Vector(0, -10);
+    const arc = Math.PI * .3;
+    const r = Math.random() * arc - arc * .5;
+    this.vel.rotate(r);
   }
 
   process(paddle: Paddle) {
