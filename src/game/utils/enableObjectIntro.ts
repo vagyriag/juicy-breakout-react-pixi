@@ -1,13 +1,11 @@
 import { DisplayObject, Ticker } from "pixi.js";
 import { Vector } from "p5";
-import { pI } from "./pI";
-import Bezier from 'bezier-js';
 
 interface params {
   pos?: Vector;
 }
 
-export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: params, duration: number) => {
+export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: params, duration: number, easingFunction?: (t: number) => number) => {
 
   const ticker = new Ticker();
   let initialTime: number;
@@ -33,14 +31,8 @@ export const enableObjectIntro = (obj: DisplayObject, enter: params, exit: param
       return;
     }
 
+    const res = easingFunction ? easingFunction(step) : step;
     if(posEnabled){
-      const curve = new Bezier(0,0 , .14,1.17 , .67,1.09, 1,1);
-      const [ t ] = curve.intersects({
-        p1: { x: step, y: -2 },
-        p2: { x: step, y: 2 }
-      });
-      const { y: res } = curve.get(t as number);
-      
       obj.position.x = enter.pos!.x + (exit.pos!.x - enter.pos!.x) * res;
       obj.position.y = enter.pos!.y + (exit.pos!.y - enter.pos!.y) * res;
     }
