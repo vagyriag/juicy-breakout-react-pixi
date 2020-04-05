@@ -1,4 +1,4 @@
-import { Application, Graphics, Sprite, Texture, DisplayObject } from 'pixi.js';
+import { Application, Graphics, Sprite, Texture } from 'pixi.js';
 import { Ball } from './Ball';
 
 export class Paddle extends Sprite {
