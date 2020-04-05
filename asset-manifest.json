@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/juicy-breakout-react-pixi/static/css/main.547804c1.chunk.css",
+    "main.js": "/juicy-breakout-react-pixi/static/js/main.15cccfc0.chunk.js",
+    "main.js.map": "/juicy-breakout-react-pixi/static/js/main.15cccfc0.chunk.js.map",
+    "runtime-main.js": "/juicy-breakout-react-pixi/static/js/runtime-main.ebca8f03.js",
+    "runtime-main.js.map": "/juicy-breakout-react-pixi/static/js/runtime-main.ebca8f03.js.map",
+    "static/js/2.de0f594c.chunk.js": "/juicy-breakout-react-pixi/static/js/2.de0f594c.chunk.js",
+    "static/js/2.de0f594c.chunk.js.map": "/juicy-breakout-react-pixi/static/js/2.de0f594c.chunk.js.map",
+    "index.html": "/juicy-breakout-react-pixi/index.html",
+    "precache-manifest.c93a37423fd0312edc441f4515a059da.js": "/juicy-breakout-react-pixi/precache-manifest.c93a37423fd0312edc441f4515a059da.js",
+    "service-worker.js": "/juicy-breakout-react-pixi/service-worker.js",
+    "static/css/main.547804c1.chunk.css.map": "/juicy-breakout-react-pixi/static/css/main.547804c1.chunk.css.map",
+    "static/js/2.de0f594c.chunk.js.LICENSE.txt": "/juicy-breakout-react-pixi/static/js/2.de0f594c.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ebca8f03.js",
+    "static/js/2.de0f594c.chunk.js",
+    "static/css/main.547804c1.chunk.css",
+    "static/js/main.15cccfc0.chunk.js"
+  ]
+}
