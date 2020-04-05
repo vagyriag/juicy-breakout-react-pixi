@@ -20,6 +20,9 @@ export const initGame = () => {
   var ball: Ball;
   var sides = new Container();
 
+  // for debugging
+  var extra = new Container();
+
   const setup = () => {
     const { width, height } = app.view;
 
@@ -52,6 +55,9 @@ export const initGame = () => {
     // add group to stage
     app.stage.addChild(group);
 
+    // add extra to stage
+    app.stage.addChild(extra);
+
     app.stage.interactive = true;
     app.stage.on('mousemove', handleMouseMove);
     app.stage.on('mousedown', handleMouseClick);
@@ -66,12 +72,13 @@ export const initGame = () => {
       const touch = isTouching(brick, ball);
       if(touch){
         ball.bounce(touch);
-        console.log(touch);
         brick.destroy();
-        const s = new Sprite(Ball.tx);
-        s.pivot.copyFrom(ball.pivot);
-        s.position.copyFrom(ball.position);
-        app.stage.addChild(s);
+        console.log(touch);
+        const p = new Graphics()
+          .beginFill(0xffffff)
+          .drawCircle(ball.position.x, ball.position.y, 5)
+          .endFill();
+        extra.addChild(p);
       }
     });
 
