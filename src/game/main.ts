@@ -67,35 +67,38 @@ export const initGame = () => {
   }
 
   const process = () => {
-    ball.process();
+    ball.process(paddle);
+
     bricks.children.forEach(brick => {
       const touch = isTouching(brick, ball);
       if(touch){
         ball.bounce(touch);
         brick.destroy();
-        console.log(touch);
-        const p = new Graphics()
+      }
+    });
+
+    const p = new Graphics()
           .beginFill(0xffffff)
           .drawCircle(ball.position.x, ball.position.y, 5)
           .endFill();
         extra.addChild(p);
-      }
-    });
 
     sides.children.forEach(side => {
       const touch = isTouching(side, ball);
       if(touch) ball.bounce(touch);
     });
-
-    const touchPaddle = isTouching(paddle, ball);
-    if(touchPaddle) ball.bounce(touchPaddle);
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {
+    if(!ball.inStage) return; // TODO: remove
     paddle.move(event.data.global.x);
   }
 
   const handleMouseClick = (event: interaction.InteractionEvent) => {
+    if(ball.inStage) { // TODO: remove
+      ball.inStage = false;
+      return;
+    }
     ball.getGlobalPosition().copyTo(ball.position);
     app.stage.addChild(ball);
     ball.release();

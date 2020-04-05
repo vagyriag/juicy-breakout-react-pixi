@@ -1,6 +1,7 @@
 import { Sprite, Graphics, Application, Texture } from "pixi.js";
 import Victor from "victor";
-import { isTouchingReturnType } from "../isTouching";
+import { isTouchingReturnType, isTouching } from "../isTouching";
+import { Paddle } from "./Paddle";
 
 export class Ball extends Sprite {
 
@@ -9,7 +10,7 @@ export class Ball extends Sprite {
   inStage: boolean;
   vel: Victor;
 
-  static createTexture (app: Application, color: number, size: number) {
+  static createTexture(app: Application, color: number, size: number) {
     const gr = new Graphics();
     gr.beginFill(color)
       .drawCircle(0, 0, size)
@@ -17,7 +18,7 @@ export class Ball extends Sprite {
     this.tx = app.renderer.generateTexture(gr, 1, 1);
   }
 
-  constructor () {
+  constructor() {
     super(Ball.tx);
     const box = this.getBounds();
     const wH = box.width * .5;
@@ -27,22 +28,41 @@ export class Ball extends Sprite {
     this.vel = new Victor(0, 0);
   }
 
-  bounce (touch: isTouchingReturnType) {
+  bounce(touch: isTouchingReturnType) {
     const { top, right, bottom, left } = touch;
-    if(top || bottom) this.vel.y *= -1;
-    if(left || right) this.vel.x *= -1;
+    if(top || bottom) this.vel.invertY();
+    if(left || right) this.vel.invertX();
   }
 
-  release () {
+  release() {
     this.inStage = true;
     this.vel.y = -10;
-    const maxR = Math.PI * .5;
-    const r = Math.random() * maxR - maxR * .5;
-    this.vel.rotate(r);
   }
 
-  process () {
+  process(paddle: Paddle) {
     if(!this.inStage) return;
+
+    const touch = isTouching(paddle, this);
+    const alreadyTouched = paddle.justTouched.find(b => b === this);
+
+    if(touch && !alreadyTouched){
+      // if touch add to touched array
+      paddle.justTouched.push(this);
+      
+      const maxAng = Math.PI * .1;
+      const maxDiff = paddle.getBounds().width * .5 + this.getBounds().width * .5;
+      const diff = this.position.x - paddle.position.x;
+      const diffNormal = diff / maxDiff;
+      const rot = maxAng * diffNormal;
+      this.vel.invertY();
+      this.vel.rotate(rot);
+    }
+    
+    // if alreadyTouched and is far enough remove from touched array
+    if(alreadyTouched && Victor.fromObject(this.position).distance(Victor.fromObject(paddle.position)) > 150){
+      paddle.justTouched = paddle.justTouched.filter(b => b !== this);
+    }
+
     this.position.set(...Victor.fromObject(this.position).add(this.vel).toArray());
   }
 }
