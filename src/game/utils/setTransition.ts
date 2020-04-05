@@ -1,7 +1,7 @@
 import { DisplayObject, Ticker } from "pixi.js";
 import { Vector } from "p5";
 
-interface params {
+interface Transformation {
   position?: Vector;
   scale?: Vector;
   rotation?: number;
@@ -9,8 +9,8 @@ interface params {
 }
 
 interface Options {
-  enter: params;
-  exit: params;
+  enter: Transformation;
+  exit: Transformation;
   duration: number;
   delay?: number;
   autoStart?: boolean;
@@ -19,12 +19,13 @@ interface Options {
 
 export const setTransition = (obj: DisplayObject, options: Options) => {
 
-  const { enter, exit, duration, delay, autoStart, easingFunction } = options;
+  const { enter, exit, duration, delay, autoStart = true, easingFunction } = options;
   const ticker = new Ticker();
   let initialTime: number;
   
   // flags
   let initCalled = false;
+  let started = false;
   const doPosition = enter.position && exit.position;
   const doScale    = enter.scale && exit.scale;
   const doRotation = typeof enter.rotation === 'number' && typeof exit.rotation === 'number';
@@ -33,18 +34,19 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   const run = () => {
     // start if has delay or autoStart
-    if((delay && delay > 0) || autoStart) {
+    if((delay && delay > 0 && autoStart === true) || autoStart) {
       init();
       setTimeout(() => start(), delay || 0);
     }
   }
 
   const start = () => {
-    if(doNothing) return;
+    if(doNothing || started) return;
     if(!initCalled) copyValuesFrom(enter);
     initialTime = Date.now();
     ticker.add(process);
     ticker.start();
+    started = true;
   }
 
   const init = () => {
@@ -80,7 +82,7 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   const calc = (src: number, a: number, b: number) => a + (b - a) * src;
   
-  const copyValuesFrom = (src: params) => {
+  const copyValuesFrom = (src: Transformation) => {
     if(doPosition) obj.position.copyFrom(src.position as any);
     if(doScale)    obj.scale.copyFrom(src.scale as any);
     if(doRotation) obj.rotation = src.rotation!;

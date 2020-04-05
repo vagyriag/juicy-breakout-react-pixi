@@ -17,6 +17,7 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
       const y = Math.floor(index / numX);
       const x = index - y * numX;
       const brick = new Brick(x * (bricksW + padding), y * (bricksH + padding));
+      bricks.addChild(brick);
       setTransition(brick, {
         enter: {
           position: new Vector(brick.position).add(Vector.random2D().mult(100)),
@@ -34,7 +35,6 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
         delay: Math.random() * 700,
         easingFunction: easing,
       });
-      bricks.addChild(brick);
     });
 
   return bricks;

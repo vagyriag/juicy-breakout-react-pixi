@@ -65,7 +65,7 @@ export const initGame = () => {
         scale: new Vector(1, 1),
       },
       duration: 500,
-      delay: 700,
+      delay: 400,
       easingFunction: Ease.out(3),
     });
 
