@@ -7,6 +7,7 @@ import { setupSides } from './utils/setupSides';
 import { setTransition } from './utils/setTransition';
 import { Vector } from './utils/Vector';
 import { Ease } from './utils/Ease';
+import { settings } from './utils/settings';
 
 export const initGame = () => {
   
@@ -55,19 +56,21 @@ export const initGame = () => {
     paddle.position.set(width * .5, height - 60);
     paddle.addBall(ball);
     group.addChild(paddle);
-    setTransition(paddle, {
-      enter: {
-        position: new Vector(paddle.position).add(0, 300),
-        scale: new Vector(.3, .3),
-      },
-      exit: {
-        position: new Vector(paddle.position),
-        scale: new Vector(1, 1),
-      },
-      duration: 500,
-      delay: 400,
-      easingFunction: Ease.out(3),
-    });
+    if(settings.paddle.transition){
+      setTransition(paddle, {
+        enter: {
+          position: new Vector(paddle.position).add(0, 300),
+          scale: new Vector(.3, .3),
+        },
+        exit: {
+          position: new Vector(paddle.position),
+          scale: new Vector(1, 1),
+        },
+        duration: 500,
+        delay: 400,
+        easingFunction: Ease.out(3),
+      });
+    }
 
     // add group to stage
     app.stage.addChild(group);

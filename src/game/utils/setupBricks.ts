@@ -3,6 +3,7 @@ import { Brick } from "../objects/Brick";
 import { setTransition } from "./setTransition";
 import { Vector } from "./Vector";
 import Bezier from 'bezier-easing';
+import { settings } from "./settings";
 
 export const setupBricks = (app: Application, bricks: Container, color: number, groupW: number, groupH: number, numX: number, numY: number, padding: number) => {
   const bricksW = (groupW - padding * (numX - 1)) / numX;
@@ -18,6 +19,7 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
       const x = index - y * numX;
       const brick = new Brick(x * (bricksW + padding), y * (bricksH + padding));
       bricks.addChild(brick);
+      if(!settings.bricks.transition) return;
       setTransition(brick, {
         enter: {
           position: new Vector(brick.position).add(Vector.random2D().mult(100)),
