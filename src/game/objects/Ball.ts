@@ -1,8 +1,8 @@
 import { Sprite, Graphics, Application, Texture } from "pixi.js";
 import { isTouchingReturnType, isTouching } from "../isTouching";
 import { Paddle } from "./Paddle";
-import { radToDeg } from "../utils/radToDeg";
 import { Vector } from "../utils/Vector";
+import { pI } from "../utils/pI";
 
 export class Ball extends Sprite {
 
@@ -58,11 +58,11 @@ export class Ball extends Sprite {
       const diffNormal = diff / maxDiff;
       const rot = maxAngMod * diffNormal;
 
-      if(this.logAngles) console.log('\n\nincoming: ', Math.round(radToDeg(this.vel.heading())));
+      if(this.logAngles) console.log('\n\nincoming: ', Math.round(pI.degrees(this.vel.heading())));
       this.vel.y *= -1;
-      if(this.logAngles) console.log('inverted: ', Math.round(radToDeg(this.vel.heading())));
+      if(this.logAngles) console.log('inverted: ', Math.round(pI.degrees(this.vel.heading())));
       this.vel.rotate(rot);
-      if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(radToDeg(this.vel.heading())));
+      if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(pI.degrees(this.vel.heading())));
 
       const maxAngMult = -.18;
       const maxAng = Math.PI * maxAngMult;
@@ -71,7 +71,7 @@ export class Ball extends Sprite {
       if(ang > maxAng) this.vel.rotate((ang - maxAng) * -1);
       if(ang < minAng) this.vel.rotate((ang - minAng) * -1);
 
-      if(this.logAngles) console.log('final: ', Math.round(radToDeg(this.vel.heading())), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
+      if(this.logAngles) console.log('final: ', Math.round(pI.degrees(this.vel.heading())), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
     }
     
     // if alreadyTouched and is far enough remove from touched array

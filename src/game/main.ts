@@ -1,9 +1,10 @@
-import { Ticker, Application, Container, interaction, Graphics, Sprite, Rectangle } from 'pixi.js';
+import { Ticker, Application, Container, interaction, Graphics } from 'pixi.js';
 import { Paddle } from './objects/Paddle';
 import { Ball } from './objects/Ball';
 import { setupBricks } from './utils/setupBricks';
 import { isTouching } from './isTouching';
 import { setupSides } from './utils/setupSides';
+import { setupTest } from './utils/setupAngleTest';
 
 export const initGame = () => {
   
@@ -25,7 +26,7 @@ export const initGame = () => {
 
   const setup = () => {
     const { width, height } = app.view;
-
+    
     // background
     const bg = new Graphics()
       .beginFill(0x000000)
@@ -100,7 +101,11 @@ export const initGame = () => {
     ball.release();
   }
 
-  setup();
+  //setup();
+  
+
+  
+  setupTest(app);
 
   return app;
 }
