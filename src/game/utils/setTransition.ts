@@ -128,6 +128,7 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
         const prev = setted[i];
         // only return group if is not consecutive
         if(prev + 1 < curr) return [prev,curr];
+        return null;
       })
       .filter(v => v) // remove emtpy values
       .forEach(([aIndex, bIndex]: any) => {
