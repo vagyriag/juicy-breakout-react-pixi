@@ -1,7 +1,9 @@
 import { DisplayObject, Ticker } from "pixi.js";
 import { Vector } from "p5";
+import { pI } from "./pI";
 
 interface Transformation {
+  time?: number;
   position?: Vector;
   scale?: Vector;
   rotation?: number;
@@ -9,8 +11,7 @@ interface Transformation {
 }
 
 interface Options {
-  enter: Transformation;
-  exit: Transformation;
+  frames: Transformation[];
   duration: number;
   delay?: number;
   autoStart?: boolean;
@@ -19,18 +20,31 @@ interface Options {
 
 export const setTransition = (obj: DisplayObject, options: Options) => {
 
-  const { enter, exit, duration, delay, autoStart = true, easingFunction } = options;
+  const { duration, delay, autoStart = true, frames } = options;
+  const easingFunction = options.easingFunction || ((t) => t);
+
   const ticker = new Ticker();
   let initialTime: number;
   
   // flags
   let initCalled = false;
   let started = false;
-  const doPosition = enter.position && exit.position;
-  const doScale    = enter.scale && exit.scale;
-  const doRotation = typeof enter.rotation === 'number' && typeof exit.rotation === 'number';
-  const doAlpha    = typeof enter.alpha === 'number' && typeof exit.alpha === 'number';
-  const doNothing  = !doPosition && !doScale && !doRotation && !doAlpha;
+  const doPosition = frames.every(s => s.position);
+  const doScale    = frames.every(s => s.scale);
+  const doRotation = frames.every(s => typeof s.rotation === 'number');
+  const doAlpha    = frames.every(s => typeof s.alpha === 'number');
+  const doNothing  = (!doPosition && !doScale && !doRotation && !doAlpha) || frames.length < 2;
+
+  if(!doNothing){
+    frames[0].time = 0;
+    frames[frames.length - 1].time = 1;
+    const setted = frames // map to index or -1
+      .map(({ time: t }, i) => (typeof t === 'number' && (t >= 0 || t <= 1) ? i : -1))
+      .filter(n => n > 0); // without first
+    if(setted.length < frames.length - 1){
+      console.log(setted);
+    }
+  }
 
   const run = () => {
     // start if has delay or autoStart
@@ -42,7 +56,7 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   const start = () => {
     if(doNothing || started) return;
-    if(!initCalled) copyValuesFrom(enter);
+    if(!initCalled) copyValuesFrom(frames[0]);
     initialTime = Date.now();
     ticker.add(process);
     ticker.start();
@@ -51,33 +65,37 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   const init = () => {
     if(doNothing) return;
-    copyValuesFrom(enter);
+    copyValuesFrom(frames[0]);
     initCalled = true;
   }
 
   const process = () => {
     const now = Date.now();
     const diff = now - initialTime;
-    const step = diff / duration;
+    const outerStep = diff / duration;
 
-    if(step >= 1){
+    if(outerStep >= 1){
       // set end position
-      copyValuesFrom(exit);
+      copyValuesFrom(frames[frames.length - 1]);
       ticker.destroy();
       return;
     }
 
-    const res = easingFunction ? easingFunction(step) : step;
+    const index = frames.findIndex(({ time }) => (outerStep < time!));
+    const frameA = frames[index - 1];
+    const frameB = frames[index];
+    const innerStep = pI.map(outerStep, frameA.time!, frameB.time!, 0, 1, true);
+    const res = easingFunction(innerStep);
     if(doPosition){
-      obj.position.x = calc(res, enter.position!.x, exit.position!.x);
-      obj.position.y = calc(res, enter.position!.y, exit.position!.y);
+      obj.position.x = calc(res, frameA.position!.x, frameB.position!.x);
+      obj.position.y = calc(res, frameA.position!.y, frameB.position!.y);
     }
     if(doScale){
-      obj.scale.x = calc(res, enter.scale!.x, exit.scale!.x);
-      obj.scale.y = calc(res, enter.scale!.y, exit.scale!.y);
+      obj.scale.x = calc(res, frameA.scale!.x, frameB.scale!.x);
+      obj.scale.y = calc(res, frameA.scale!.y, frameB.scale!.y);
     }
-    if(doRotation) obj.rotation = calc(res, enter.rotation!, exit.rotation!);
-    if(doAlpha) obj.alpha = calc(res, enter.alpha!, exit.alpha!);
+    if(doRotation) obj.rotation = calc(res, frameA.rotation!, frameB.rotation!);
+    if(doAlpha) obj.alpha = calc(res, frameA.alpha!, frameB.alpha!);
   }
 
   const calc = (src: number, a: number, b: number) => a + (b - a) * src;
