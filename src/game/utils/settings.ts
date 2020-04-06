@@ -8,5 +8,7 @@ export const settings = {
   },
   ball: {
     squishy: true,
+    scale: true,
+    rotation: true,
   }
 }

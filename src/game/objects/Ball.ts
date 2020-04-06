@@ -5,11 +5,12 @@ import { Vector } from "../utils/Vector";
 import { pI } from "../utils/pI";
 import { setTransition } from "../utils/setTransition";
 import Bezier from 'bezier-easing';
+import { settings } from "../utils/settings";
 
 export class Ball extends Sprite {
 
   static tx: Texture;
-  static squishyBezier = Bezier(0,1.74,.28,.77);
+  static squishyBezier = Bezier(0,1.54,.37,.74);
 
   inStage: boolean;
   vel: Vector;
@@ -37,19 +38,20 @@ export class Ball extends Sprite {
   }
 
   bounce(touch: isTouchingReturnType, obj: DisplayObject|null = null) {
+    if(!this.inStage) return false;
     if(obj && this.lastTouched === obj) return false;
     this.lastTouched = obj;
     const { top, right, bottom, left } = touch;
     if(top || bottom) this.vel.y *= -1;
     else if(left || right) this.vel.x *= -1;
-    setTransition(this, {
+    if(settings.ball.squishy) setTransition(this, {
       enter: {
-        scale: new Vector(1.6, 1.6),
+        scale: new Vector(1.5, 1.5),
       },
       exit: {
-        scale: new Vector(1, 1),
+        scale: new Vector(this.scale),
       },
-      duration: 1000,
+      duration: 50,
       autoStart: true,
       easingFunction: Ball.squishyBezier,
     });
@@ -66,6 +68,9 @@ export class Ball extends Sprite {
 
   process(paddle: Paddle) {
     if(!this.inStage) return;
+
+    if(settings.ball.scale) this.scale.set(1.5, 1);
+    if(settings.ball.rotation) this.rotation = this.vel.heading();
 
     const touch = isTouching(paddle, this, 1);
     let bounced = false;
