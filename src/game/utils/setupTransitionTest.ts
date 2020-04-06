@@ -7,7 +7,7 @@ import { Ease } from "./Ease";
 export const setupTransitionTest = (app: Application) => {
   const { width, height } = app.view;
 
-  Ball.createTexture(app, 0xccf111, 20);
+  Ball.createTexture(app, 0xccf111, 0xccf111, 20);
   const ball = new Ball();
   ball.position.set(width * .5, height * .5);
   app.stage.addChild(ball);

@@ -11,6 +11,7 @@ export const settings = {
     wobble: true,
     scale: true,
     rotation: true,
+    bounceColor: true,
   },
   test: {
     transition: false,

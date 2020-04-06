@@ -11,22 +11,32 @@ import { Ease } from "../utils/Ease";
 export class Ball extends Sprite {
 
   static tx: Texture;
+  static txBounce: Texture;
   static squishyBezier = Bezier(0,1.54,.37,.74);
   static wobbleEase = Ease.inOut(1.5);
+  static bounceTextureDuration = 100;
 
   inStage: boolean;
   vel: Vector;
 
   logAngles = false;
 
-  lastTouched: DisplayObject|null = null;
+  lastTouchedObj: DisplayObject|null = null;
+  lastTouchedTime: number = 0;
 
-  static createTexture(app: Application, color: number, size: number) {
+  static createTexture(app: Application, color: number, colorBounce: number, size: number) {
     const gr = new Graphics();
     gr.beginFill(color)
       .drawCircle(0, 0, size)
       .endFill();
+    // regular
     this.tx = app.renderer.generateTexture(gr, 1, 1);
+    gr.clear()
+      .beginFill(colorBounce)
+      .drawCircle(0, 0, size)
+      .endFill();
+    // bounce
+    this.txBounce = app.renderer.generateTexture(gr, 1, 1);
   }
 
   constructor() {
@@ -41,8 +51,8 @@ export class Ball extends Sprite {
 
   bounce(touch: isTouchingReturnType, obj: DisplayObject|null = null) {
     if(!this.inStage) return false;
-    if(obj && this.lastTouched === obj) return false;
-    this.lastTouched = obj;
+    if(obj && this.lastTouchedObj === obj) return false;
+    this.lastTouchedObj = obj;
     const { top, right, bottom, left } = touch;
     if(top || bottom) this.vel.y *= -1;
     else if(left || right) this.vel.x *= -1;
@@ -50,6 +60,10 @@ export class Ball extends Sprite {
     if(settings.ball.wobble) this.setWobble(settings.ball.squishy);
     // only squishy
     else if(settings.ball.squishy) this.setSquishy();
+    if(settings.ball.bounceColor) {
+      this.lastTouchedTime = Date.now();
+      this.texture = Ball.txBounce;
+    }
     return true;
   }
 
@@ -63,6 +77,11 @@ export class Ball extends Sprite {
 
   process(paddle: Paddle) {
     if(!this.inStage) return;
+
+    if(this.texture === Ball.txBounce){
+      const diff = Date.now() - this.lastTouchedTime;
+      if(diff > Ball.bounceTextureDuration) this.texture = Ball.tx;
+    }
 
     if(settings.ball.scale) this.scale.set(1.5, 1);
     if(settings.ball.rotation) this.rotation = this.vel.heading();

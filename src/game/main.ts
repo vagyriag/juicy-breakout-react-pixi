@@ -49,7 +49,7 @@ export const initGame = () => {
     group.addChild(bricks);
 
     // setup ball
-    Ball.createTexture(app, 0xccf111, 20);
+    Ball.createTexture(app, 0xccf111, 0xffffff, 20);
     ball = new Ball();
     
     // setup paddle

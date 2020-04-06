@@ -12,7 +12,7 @@ export const setupAngleTest = (app: Application) => {
   const objA = new Brick(width * .5, height * .5);
   app.stage.addChild(objA);
 
-  Ball.createTexture(app, 0xccf111, 20);
+  Ball.createTexture(app, 0xccf111, 0xccf111, 20);
   const objB = new Ball();
   app.stage.addChild(objB);
 
