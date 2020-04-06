@@ -2,6 +2,7 @@ import { Application } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { setTransition } from "./setTransition";
 import { Vector } from "./Vector";
+import { Ease } from "./Ease";
 
 export const setupTransitionTest = (app: Application) => {
   const { width, height } = app.view;
@@ -11,30 +12,33 @@ export const setupTransitionTest = (app: Application) => {
   ball.position.set(width * .5, height * .5);
   app.stage.addChild(ball);
 
-  const duration = 1000;
+  const duration = 800;
+  const initialScale = new Vector(1, 1.5);
   const transition = () => {
+    console.clear();
     setTransition(ball, {
       frames: [
         {
-          scale: new Vector(0, 0),
+          scale: initialScale,
         },
         {
-          time: .2,
-          scale: new Vector(2, 1),
+          scale: new Vector(1.4, .7),
         },
         {
-          time: .5,
-          scale: new Vector(3, 3),
+          scale: new Vector(1, 1.3),
+        },
+        {
+          scale: new Vector(1.2, .8),
         },
         {
           scale: new Vector(1, 1),
-        }
+        },
       ],
       duration: duration,
       autoStart: true,
+      easingFunction: Ease.inOut(1.5),
     });
   };
   transition();
   setInterval(transition, duration + 500);
-
 }

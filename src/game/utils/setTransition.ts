@@ -47,17 +47,6 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
     }
   }
 
-  const calculateStepTimes = () => {
-    frames[0].time = 0;
-    frames[frames.length - 1].time = 1;
-    const setted = frames // map to index or -1
-      .map(({ time: t }, i) => (typeof t === 'number' && (t >= 0 || t <= 1) ? i : -1))
-      .filter(n => n > 0); // without first
-    if(setted.length < frames.length - 1){
-      console.log(setted);
-    }
-  }
-
   // start transition
   const start = () => {
     if(doNothing || started) return;
@@ -119,6 +108,50 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
     if(doScale)    obj.scale.copyFrom(src.scale as any);
     if(doRotation) obj.rotation = src.rotation!;
     if(doAlpha)    obj.alpha = src.alpha!;
+  }
+
+  const calculateStepTimes = () => {
+    // set first and last frames with 0 and 1
+    frames[0].time = 0;
+    frames[frames.length - 1].time = 1;
+
+    // only makes sense if there's more than 2
+    if(frames.length === 2) return;
+
+    // get frames with time set
+    const setted = frames // map to index or -1
+      .map(({ time: t }, i) => (typeof t === 'number' && (t >= 0 || t <= 1) ? i : -1))
+      .filter(n => n >= 0); // remove -1
+
+    setted.slice(1) // remove first (0)
+      .map((curr, i) => {
+        const prev = setted[i];
+        // only return group if is not consecutive
+        if(prev + 1 < curr) return [prev,curr];
+      })
+      .filter(v => v) // remove emtpy values
+      .forEach(([aIndex, bIndex]: any) => {
+        //console.log(aIndex, bIndex);
+        const frameA = frames[aIndex];
+        let frameB = frames[bIndex];
+        // to prevent range errors
+        if(frameA.time! > frameB.time!) frameB = frameA;
+        // dime difference in range
+        const timeDiff = frameB.time! - frameA.time!;
+        // diff between indexes (spaces between)
+        const indexDiff = bIndex - aIndex;
+        // time division
+        const timeStep = timeDiff / indexDiff;
+        // loop spaces to fill (indexDiff - 1)
+        Array.from({ length: indexDiff - 1 })
+          .forEach((_, i) => {
+            // empty index
+            const modIndex = aIndex + i + 1;
+            // beginning + step
+            const modTime = frameA.time! + timeStep * (i + 1);
+            frames[modIndex].time = modTime;
+          });
+      });
   }
 
   //
