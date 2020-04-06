@@ -3,6 +3,8 @@ import { isTouchingReturnType, isTouching } from "../isTouching";
 import { Paddle } from "./Paddle";
 import { Vector } from "../utils/Vector";
 import { pI } from "../utils/pI";
+import { setTransition } from "../utils/setTransition";
+import Bezier from 'bezier-easing';
 
 export class Ball extends Sprite {
 
@@ -12,6 +14,8 @@ export class Ball extends Sprite {
   vel: Vector;
 
   logAngles = false;
+
+  static squishyBezier = Bezier(0,1.74,.28,.77);
 
   static createTexture(app: Application, color: number, size: number) {
     const gr = new Graphics();
@@ -35,6 +39,17 @@ export class Ball extends Sprite {
     const { top, right, bottom, left } = touch;
     if(top || bottom) this.vel.y *= -1;
     if(left || right) this.vel.x *= -1;
+    setTransition(this, {
+      enter: {
+        scale: new Vector(1.6, 1.6),
+      },
+      exit: {
+        scale: new Vector(1, 1),
+      },
+      duration: 1000,
+      autoStart: true,
+      easingFunction: Ball.squishyBezier,
+    });
   }
 
   release() {
@@ -51,7 +66,7 @@ export class Ball extends Sprite {
     const touch = isTouching(paddle, this, 1);
     const alreadyTouched = paddle.justTouched.find(b => b === this);
 
-    if(touch && !touch.top && !alreadyTouched) {
+    if(touch && !alreadyTouched) {
       // if touch add to touched array
       paddle.justTouched.push(this);
       this.bounce(touch);
@@ -68,7 +83,7 @@ export class Ball extends Sprite {
       const rot = maxAngMod * diffNormal;
 
       if(this.logAngles) console.log('\n\nincoming: ', Math.round(pI.degrees(this.vel.heading())));
-      this.vel.y *= -1;
+      //this.vel.y *= -1;
       if(this.logAngles) console.log('inverted: ', Math.round(pI.degrees(this.vel.heading())));
       this.vel.rotate(rot);
       if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(pI.degrees(this.vel.heading())));

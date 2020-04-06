@@ -1,9 +1,12 @@
 export const settings = {
-  bricks: {
+  brick: {
     transition: true,
   },
   paddle: {
     transition: true,
     squishy: true,
   },
+  ball: {
+    squishy: true,
+  }
 }

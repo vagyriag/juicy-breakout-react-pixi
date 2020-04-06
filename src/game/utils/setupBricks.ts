@@ -19,7 +19,7 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
       const x = index - y * numX;
       const brick = new Brick(x * (bricksW + padding), y * (bricksH + padding));
       bricks.addChild(brick);
-      if(!settings.bricks.transition) return;
+      if(!settings.brick.transition) return;
       setTransition(brick, {
         enter: {
           position: new Vector(brick.position).add(Vector.random2D().mult(100)),
