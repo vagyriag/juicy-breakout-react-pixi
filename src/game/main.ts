@@ -107,7 +107,7 @@ export const initGame = () => {
 
     sides.children.forEach(side => {
       const touch = isTouching(side, ball, 1);
-      if(touch) ball.bounce(touch);
+      if(touch) ball.bounce(touch, side);
     });
   }
 

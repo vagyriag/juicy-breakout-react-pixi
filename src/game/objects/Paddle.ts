@@ -6,7 +6,6 @@ import { settings } from '../utils/settings';
 export class Paddle extends Sprite {
 
   static tx: Texture;
-  justTouched: Ball[];
 
   static createTexture(app: Application, color: number, width: number, height: number) {
     const gr = new Graphics();
@@ -22,7 +21,6 @@ export class Paddle extends Sprite {
     const wH = box.width * .5;
     const hH = box.height * .5;
     this.pivot.set(wH, hH);
-    this.justTouched = [];
   }
 
   move(x: number) {

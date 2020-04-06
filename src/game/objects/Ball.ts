@@ -1,4 +1,4 @@
-import { Sprite, Graphics, Application, Texture } from "pixi.js";
+import { Sprite, Graphics, Application, Texture, DisplayObject } from "pixi.js";
 import { isTouchingReturnType, isTouching } from "../isTouching";
 import { Paddle } from "./Paddle";
 import { Vector } from "../utils/Vector";
@@ -9,13 +9,14 @@ import Bezier from 'bezier-easing';
 export class Ball extends Sprite {
 
   static tx: Texture;
+  static squishyBezier = Bezier(0,1.74,.28,.77);
 
   inStage: boolean;
   vel: Vector;
 
   logAngles = false;
 
-  static squishyBezier = Bezier(0,1.74,.28,.77);
+  lastTouched: DisplayObject|null = null;
 
   static createTexture(app: Application, color: number, size: number) {
     const gr = new Graphics();
@@ -35,10 +36,12 @@ export class Ball extends Sprite {
     this.vel = new Vector();
   }
 
-  bounce(touch: isTouchingReturnType) {
+  bounce(touch: isTouchingReturnType, obj: DisplayObject|null = null) {
+    if(obj && this.lastTouched === obj) return false;
+    this.lastTouched = obj;
     const { top, right, bottom, left } = touch;
     if(top || bottom) this.vel.y *= -1;
-    if(left || right) this.vel.x *= -1;
+    else if(left || right) this.vel.x *= -1;
     setTransition(this, {
       enter: {
         scale: new Vector(1.6, 1.6),
@@ -50,6 +53,7 @@ export class Ball extends Sprite {
       autoStart: true,
       easingFunction: Ball.squishyBezier,
     });
+    return true;
   }
 
   release() {
@@ -64,18 +68,11 @@ export class Ball extends Sprite {
     if(!this.inStage) return;
 
     const touch = isTouching(paddle, this, 1);
-    const alreadyTouched = paddle.justTouched.find(b => b === this);
+    let bounced = false;
 
-    if(touch && !alreadyTouched) {
-      // if touch add to touched array
-      paddle.justTouched.push(this);
-      this.bounce(touch);
-    }
+    if(touch) bounced = this.bounce(touch, paddle);
 
-    if(touch && touch.top && !alreadyTouched){
-      // if touch add to touched array
-      paddle.justTouched.push(this);
-      
+    if(touch && touch.top && bounced){
       const maxAngMod = Math.PI * .1;
       const maxDiff = paddle.getBounds().width * .5 + this.getBounds().width * .5;
       const diff = this.position.x - paddle.position.x;
@@ -83,7 +80,6 @@ export class Ball extends Sprite {
       const rot = maxAngMod * diffNormal;
 
       if(this.logAngles) console.log('\n\nincoming: ', Math.round(pI.degrees(this.vel.heading())));
-      //this.vel.y *= -1;
       if(this.logAngles) console.log('inverted: ', Math.round(pI.degrees(this.vel.heading())));
       this.vel.rotate(rot);
       if(this.logAngles) console.log('rotated: ', Math.round(rot * 180/Math.PI), Math.round(pI.degrees(this.vel.heading())));
@@ -96,11 +92,6 @@ export class Ball extends Sprite {
       if(ang < minAng) this.vel.rotate((ang - minAng) * -1);
 
       if(this.logAngles) console.log('final: ', Math.round(pI.degrees(this.vel.heading())), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
-    }
-    
-    // if alreadyTouched and is far enough remove from touched array
-    if(alreadyTouched && Vector.dist(new Vector(this.position), new Vector(paddle.position)) > 150){
-      paddle.justTouched = paddle.justTouched.filter(b => b !== this);
     }
     
     this.position.set(...new Vector(this.position).add(this.vel).array());
