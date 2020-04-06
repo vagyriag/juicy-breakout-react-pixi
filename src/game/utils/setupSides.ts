@@ -1,22 +1,22 @@
 import { Container, Graphics, Application } from "pixi.js";
 
-export const setupSides = (app: Application, sides: Container, sideSize: number, sideColor: number) => {
+export const setupSides = (app: Application, sides: Container, size: number, color: number) => {
   const { width, height } = app.view;
   var top = new Graphics()
-    .beginFill(sideColor)
-    .drawRect(0, -sideSize, width, sideSize)
+    .beginFill(color)
+    .drawRect(-size, -size, width + size, size)
     .endFill();
   var right = new Graphics()
-    .beginFill(sideColor)
-    .drawRect(width, 0, sideSize, height)
+    .beginFill(color)
+    .drawRect(width, -size, size, height + size)
     .endFill();
   var bottom = new Graphics()
-    .beginFill(sideColor)
-    .drawRect(0, height, width, sideSize)
+    .beginFill(color)
+    .drawRect(-size, height, width + size, size)
     .endFill();
   var left = new Graphics()
-    .beginFill(sideColor)
-    .drawRect(-sideSize, 0, sideSize, height)
+    .beginFill(color)
+    .drawRect(-size, -size, size, height + size)
     .endFill();
   sides.addChild(top);
   sides.addChild(right);

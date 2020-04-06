@@ -38,7 +38,7 @@ export const initGame = () => {
     app.stage.addChild(bg);
 
     //sides
-    setupSides(app, sides, 30, 0x11cccc);
+    setupSides(app, sides, 100, 0x11cccc);
     app.stage.addChild(sides);
 
     // setup bricks
