@@ -8,6 +8,8 @@ import { setTransition } from './utils/setTransition';
 import { Vector } from './utils/Vector';
 import { Ease } from './utils/Ease';
 import { settings } from './utils/settings';
+import { setupAngleTest } from './utils/setupAngleTest';
+import { setupTransitionTest } from './utils/setupTransitionTest';
 
 export const initGame = () => {
   
@@ -58,14 +60,16 @@ export const initGame = () => {
     group.addChild(paddle);
     if(settings.paddle.transition){
       setTransition(paddle, {
-        enter: {
-          position: new Vector(paddle.position).add(0, 300),
-          scale: new Vector(.3, .3),
-        },
-        exit: {
-          position: new Vector(paddle.position),
-          scale: new Vector(1, 1),
-        },
+        frames: [
+          {
+            position: new Vector(paddle.position).add(0, 300),
+            scale: new Vector(.3, .3),
+          },
+          {
+            position: new Vector(paddle.position),
+            scale: new Vector(1, 1),
+          },
+        ],
         duration: 500,
         delay: 400,
         easingFunction: Ease.out(3),
@@ -122,7 +126,13 @@ export const initGame = () => {
     ball.release();
   }
 
-  setup();
+  if(settings.test.angles){
+    setupAngleTest(app);
+  } else if(settings.test.transition){
+    setupTransitionTest(app);
+  } else {
+    setup();
+  }
 
   return app;
 }

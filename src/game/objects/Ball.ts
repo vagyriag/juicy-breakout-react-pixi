@@ -45,12 +45,14 @@ export class Ball extends Sprite {
     if(top || bottom) this.vel.y *= -1;
     else if(left || right) this.vel.x *= -1;
     if(settings.ball.squishy) setTransition(this, {
-      enter: {
-        scale: new Vector(1.5, 1.5),
-      },
-      exit: {
-        scale: new Vector(this.scale),
-      },
+      frames: [
+        {
+          scale: new Vector(1.5, 1.5),
+        },
+        {
+          scale: new Vector(this.scale),
+        },
+      ],
       duration: 50,
       autoStart: true,
       easingFunction: Ball.squishyBezier,

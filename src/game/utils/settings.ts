@@ -10,5 +10,9 @@ export const settings = {
     squishy: true,
     scale: true,
     rotation: true,
+  },
+  test: {
+    transition: false,
+    angles: false,
   }
 }
