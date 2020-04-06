@@ -6,11 +6,13 @@ import { pI } from "../utils/pI";
 import { setTransition } from "../utils/setTransition";
 import Bezier from 'bezier-easing';
 import { settings } from "../utils/settings";
+import { Ease } from "../utils/Ease";
 
 export class Ball extends Sprite {
 
   static tx: Texture;
   static squishyBezier = Bezier(0,1.54,.37,.74);
+  static wobbleEase = Ease.inOut(1.5);
 
   inStage: boolean;
   vel: Vector;
@@ -44,19 +46,10 @@ export class Ball extends Sprite {
     const { top, right, bottom, left } = touch;
     if(top || bottom) this.vel.y *= -1;
     else if(left || right) this.vel.x *= -1;
-    if(settings.ball.squishy) setTransition(this, {
-      frames: [
-        {
-          scale: new Vector(1.5, 1.5),
-        },
-        {
-          scale: new Vector(this.scale),
-        },
-      ],
-      duration: 50,
-      autoStart: true,
-      easingFunction: Ball.squishyBezier,
-    });
+    // wobble (plus squishy if enabled)
+    if(settings.ball.wobble) this.setWobble(settings.ball.squishy);
+    // only squishy
+    else if(settings.ball.squishy) this.setSquishy();
     return true;
   }
 
@@ -102,5 +95,33 @@ export class Ball extends Sprite {
     }
     
     this.position.set(...new Vector(this.position).add(this.vel).array());
+  }
+
+  setSquishy() {
+    setTransition(this, {
+      frames: [
+        { scale: new Vector(1.5, 1.5) },
+        { scale: new Vector(this.scale) },
+      ],
+      duration: 50,
+      autoStart: true,
+      easingFunction: Ball.squishyBezier,
+    });
+  }
+
+  setWobble(squishy: boolean) {
+    const initialScale = new Vector(this.scale);
+    setTransition(this, {
+      frames: [
+        { scale: squishy ? new Vector(1.5, 1.5) : initialScale },
+        { scale: new Vector(1.4, .7) },
+        { scale: new Vector(1, 1.3) },
+        { scale: new Vector(1.2, .8) },
+        { scale: initialScale },
+      ],
+      duration: 800,
+      autoStart: true,
+      easingFunction: Ball.wobbleEase,
+    });
   }
 }
