@@ -10,6 +10,7 @@ import { Ease } from './utils/Ease';
 import { settings } from './utils/settings';
 import { setupAngleTest } from './utils/setupAngleTest';
 import { setupTransitionTest } from './utils/setupTransitionTest';
+import { pI } from './utils/pI';
 
 export const initGame = () => {
   
@@ -95,17 +96,18 @@ export const initGame = () => {
     const touch = isTouching(paddle, ball, 1);
     const bounce = touch && ball.bounce(touch, paddle);
 
-    if(bounce) ballTouched();
+    if(bounce) wobbleBricks();
 
     ball.process(paddle, touch, bounce);
     paddle.process();
 
-    bricks.children.forEach(brick => {
+    bricks.children.some(brick => {
       const touch = isTouching(brick, ball);
       if(touch){
         ball.bounce(touch);
         bricks.removeChild(brick);
-        ballTouched();
+        wobbleBricks(true);
+        return true;
       }
     });
 
@@ -113,14 +115,40 @@ export const initGame = () => {
       const touch = isTouching(side, ball, 1);
       if(touch) {
         ball.bounce(touch, side);
-        ballTouched();
+        wobbleBricks();
       }
     });
   }
 
-  const ballTouched = () => {
-    if(!ball.inStage) return;
-    
+  const wobbleBricks = (touchedBrick?: boolean) => {
+    if(!ball.inStage || !settings.brick.wobble) return;
+    const point = new Vector(ball.position);
+    bricks.children.forEach(brick => {
+      const delay = !touchedBrick ? Math.random() * 70
+        : pI.map(point.dist(new Vector(brick.position)), ball.height*2, app.view.width/2, 0, 200, true);
+      setTransition(brick, {
+        frames: [
+          {
+            scale: new Vector(1, 1),
+            rotation: 0
+          },
+          {
+            scale: new Vector(1.1, 1.1),
+            rotation: Math.random() * .2 - .1
+          },
+          {
+            scale: new Vector(0.9, 0.9),
+            rotation: Math.random() * .2 - .1
+          },
+          {
+            scale: new Vector(1, 1),
+            rotation: 0
+          }
+        ],
+        duration: 200,
+        delay,
+      });
+    });
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {

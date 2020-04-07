@@ -1,6 +1,7 @@
 export const settings = {
   brick: {
     transition: true,
+    wobble: true,
   },
   paddle: {
     transition: true,
