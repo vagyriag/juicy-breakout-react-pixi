@@ -1,2 +1,2 @@
 General:
-  ☐ Scale should affect touch function? I don't think so. Maybe there should be an optional initial bounding box that doesn't change over time or that can be updated when required.
+  ✔ Scale should affect touch function? I don't think so. Maybe there should be an optional initial bounding box that doesn't change over time or that can be updated when required. @done(20-04-06 20:16)

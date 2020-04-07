@@ -98,7 +98,7 @@ export class Ball extends Sprite implements withTouchTransform {
 
     if(touch && touch.top && bounced){
       const maxAngMod = Math.PI * .1;
-      const maxDiff = paddle.getBounds().width * .5 + this.getBounds().width * .5;
+      const maxDiff = paddle.getBounds(true).width * .5 + this.getBounds(true).width * .5;
       const diff = this.position.x - paddle.position.x;
       const diffNormal = diff / maxDiff;
       const rot = maxAngMod * diffNormal;
