@@ -62,16 +62,18 @@ const isTouchingBox = (boxA: Rectangle, boxB: Rectangle) => {
 
 const getBoundsHelper = (obj: DisplayObject|withTouchTransform) => {
   let bounds;
-  if('touchTransform' in obj){
-    const { scale, rotation } = obj.touchTransform;
+  const { scale, rotation } = 'touchTransform' in obj && obj.touchTransform ? obj.touchTransform : {} as any;
+  const doRotation = typeof rotation === 'number';
+  const doScale = scale instanceof Vector;
+  if(doRotation || doScale){
     const prevScale = new Vector(obj.scale);
     const prevRotation = obj.rotation;
-    if(scale instanceof Vector) obj.scale.copyFrom(scale);
-    if(typeof rotation === 'number') obj.rotation = rotation;
+    if(doScale) obj.scale.copyFrom(scale);
+    if(doRotation) obj.rotation = rotation;
     obj.updateTransform();
     bounds = obj.getBounds(true);
-    if(scale instanceof Vector) obj.rotation = prevRotation;
-    if(typeof rotation === 'number') obj.scale.copyFrom(prevScale);
+    if(doScale) obj.rotation = prevRotation;
+    if(doRotation) obj.scale.copyFrom(prevScale);
     obj.updateTransform();
   } else {
     bounds = obj.getBounds(true);
