@@ -30,6 +30,8 @@ export const initGame = () => {
   // for debugging
   var extra = new Container();
 
+  let canMovePaddle = !settings.paddle.transition;
+
   const setup = () => {
     const { width, height } = app.view;
     
@@ -74,6 +76,7 @@ export const initGame = () => {
         duration: 500,
         delay: 400,
         easingFunction: Ease.out(3),
+        onFinish: () => canMovePaddle = true,
       });
     }
 
@@ -152,7 +155,7 @@ export const initGame = () => {
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {
-    paddle.move(event.data.global.x);
+    if(canMovePaddle) paddle.move(event.data.global.x);
   }
 
   const handleMouseClick = (event: interaction.InteractionEvent) => {
