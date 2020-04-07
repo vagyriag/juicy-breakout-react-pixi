@@ -99,6 +99,9 @@ export const initGame = () => {
   }
 
   const process = () => {
+    paddle.process();
+    if(!ball.inStage) return;
+
     const touch = isTouching(paddle, ball, 1);
     const bounce = touch && ball.bounce(touch, paddle);
 
@@ -108,7 +111,6 @@ export const initGame = () => {
     }
 
     ball.process(paddle, touch, bounce);
-    paddle.process();
 
     bricks.children.some(brick => {
       const touch = isTouching(brick, ball);
@@ -126,6 +128,7 @@ export const initGame = () => {
       if(touch) {
         ball.bounce(touch, side);
         wobbleBricks();
+        sound.wall();
       }
     });
   }

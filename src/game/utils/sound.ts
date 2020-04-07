@@ -1,23 +1,29 @@
 import { Howl } from "howler";
 import { settings } from "./settings";
 
+let wall: Howl;
+let paddle: Howl;
 let bricks: Howl[];
+
 let lastBrickHitTime = 0;
 let lastBrickHitIndex = 0;
 
-let paddle: Howl;
 
 const load = () => {
   const dir = `${process.env.PUBLIC_URL}/assets/sound`;
 
   bricks = Array.from({ length: 12 }).map((_, index) => {
     return new Howl({
-      src: `${dir}/pling${index + 1}.mp3`,
+      src: `${dir}/pling${index + 1}.mp3`
     });
   });
 
   paddle = new Howl({
     src: `${dir}/ball-paddle.mp3`
+  });
+
+  wall = new Howl({
+    src: `${dir}/ball-wall.mp3`
   });
 }
 
@@ -37,8 +43,14 @@ const hitPaddle = () => {
   paddle.play();
 }
 
+const hitWall = () => {
+  if(!settings.wall.sound) return;
+  wall.play();
+}
+
 export const sound = {
   load,
   brick: hitBrick,
   paddle: hitPaddle,
+  wall: hitWall,
 }
