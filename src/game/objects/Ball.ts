@@ -80,7 +80,7 @@ export class Ball extends Sprite implements withTouchTransform {
     this.vel.rotate(r);
   }
 
-  process(paddle: Paddle) {
+  process(paddle: Paddle, touch: isTouchingReturnType|false, bounced: boolean) {
     if(!this.inStage) return;
 
     if(this.texture === Ball.txBounce){
@@ -90,11 +90,6 @@ export class Ball extends Sprite implements withTouchTransform {
 
     if(settings.ball.scale) this.scale.set(1.5, 1);
     if(settings.ball.rotation) this.rotation = this.vel.heading();
-
-    const touch = isTouching(paddle, this, 1);
-    let bounced = false;
-
-    if(touch) bounced = this.bounce(touch, paddle);
 
     if(touch && touch.top && bounced){
       const maxAngMod = Math.PI * .1;

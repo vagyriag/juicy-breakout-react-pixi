@@ -92,7 +92,12 @@ export const initGame = () => {
   }
 
   const process = () => {
-    ball.process(paddle);
+    const touch = isTouching(paddle, ball, 1);
+    const bounce = touch && ball.bounce(touch, paddle);
+
+    if(bounce) ballTouched();
+
+    ball.process(paddle, touch, bounce);
     paddle.process();
 
     bricks.children.forEach(brick => {
@@ -100,19 +105,22 @@ export const initGame = () => {
       if(touch){
         ball.bounce(touch);
         bricks.removeChild(brick);
+        ballTouched();
       }
     });
 
-    /*const p = new Graphics()
-          .beginFill(0xffffff)
-          .drawCircle(ball.position.x, ball.position.y, 5)
-          .endFill();
-        extra.addChild(p);*/
-
     sides.children.forEach(side => {
       const touch = isTouching(side, ball, 1);
-      if(touch) ball.bounce(touch, side);
+      if(touch) {
+        ball.bounce(touch, side);
+        ballTouched();
+      }
     });
+  }
+
+  const ballTouched = () => {
+    if(!ball.inStage) return;
+    
   }
 
   const handleMouseMove = (event: interaction.InteractionEvent) => {
