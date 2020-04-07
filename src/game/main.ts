@@ -11,8 +11,11 @@ import { settings } from './utils/settings';
 import { setupAngleTest } from './utils/setupAngleTest';
 import { setupTransitionTest } from './utils/setupTransitionTest';
 import { pI } from './utils/pI';
+import { sound } from './utils/sound';
 
 export const initGame = () => {
+
+  sound.load();
   
   const app = new Application({ 
     width: window.innerWidth,
@@ -110,6 +113,7 @@ export const initGame = () => {
         ball.bounce(touch);
         bricks.removeChild(brick);
         wobbleBricks(true);
+        sound.hitBrick();
       }
       return touch;
     });
