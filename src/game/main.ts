@@ -12,6 +12,7 @@ import { setupAngleTest } from './utils/setupAngleTest';
 import { setupTransitionTest } from './utils/setupTransitionTest';
 import { pI } from './utils/pI';
 import { sound } from './utils/sound';
+import { Brick } from './objects/Brick';
 
 export const initGame = () => {
 
@@ -113,6 +114,7 @@ export const initGame = () => {
     ball.process(paddle, touch, bounce);
 
     bricks.children.some(brick => {
+      if(brick instanceof Brick) brick.process();
       const touch = isTouching(brick, ball);
       if(touch){
         ball.bounce(touch);
@@ -134,12 +136,18 @@ export const initGame = () => {
   }
 
   const wobbleBricks = (touchedBrick?: boolean) => {
-    if(!ball.inStage || !settings.brick.wobble) return;
+    if(!ball.inStage) return;
+    const minDist = Brick.tx.width;
+    const maxDist = app.view.width/2;
     const point = new Vector(ball.position);
     bricks.children.forEach(brick => {
-      const delay = !touchedBrick ? Math.random() * 70
-        : pI.map(point.dist(new Vector(brick.position)), ball.height*2, app.view.width/2, 0, 200, true);
-      setTransition(brick, {
+      const dist = !touchedBrick ? 0 : point.dist(new Vector(brick.position));
+      const delay = !touchedBrick ? Math.random() * 70 : pI.map(dist, minDist, maxDist, 0, 200, true);
+      const color = !touchedBrick ? Math.random() : dist/maxDist;
+
+      if(settings.brick.color && brick instanceof Brick) brick.changeTexture(color);
+
+      if(settings.brick.wobble) setTransition(brick, {
         frames: [
           {
             scale: new Vector(1, 1),

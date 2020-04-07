@@ -3,6 +3,7 @@ export const settings = {
     transition: true,
     wobble: true,
     sound: true,
+    color: true,
   },
   paddle: {
     transition: true,
