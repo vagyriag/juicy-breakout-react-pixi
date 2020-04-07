@@ -1,6 +1,7 @@
 import { Howl } from "howler";
 import { settings } from "./settings";
 
+let music: Howl;
 let wall: Howl;
 let paddle: Howl;
 let bricks: Howl[];
@@ -24,6 +25,12 @@ const load = () => {
 
   wall = new Howl({
     src: `${dir}/ball-wall.mp3`
+  });
+
+  music = new Howl({
+    src: `${dir}/juicy_breakout-theme.mp3`,
+    autoplay: settings.general.music,
+    volume: .3
   });
 }
 
