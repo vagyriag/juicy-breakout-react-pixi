@@ -1,4 +1,4 @@
-import { Container, IPoint, Texture, Application, Graphics } from "pixi.js";
+import { Container, IPoint, Application, Graphics } from "pixi.js";
 import * as particles from 'pixi-particles';
 
 let emitter: particles.Emitter;

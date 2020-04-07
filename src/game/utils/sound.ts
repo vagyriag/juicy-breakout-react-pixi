@@ -29,10 +29,11 @@ const load = () => {
 
   music = new Howl({
     src: `${dir}/juicy_breakout-theme.mp3`,
-    autoplay: settings.general.music,
     loop: true,
     volume: .3,
   });
+
+  if(settings.general.music) music.play();
 }
 
 const hitBrick = () => {
