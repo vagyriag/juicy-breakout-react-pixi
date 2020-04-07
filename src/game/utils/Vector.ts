@@ -28,7 +28,7 @@ export class Vector extends p5Vector implements IPoint {
     return p;
   }
 
-  equals(a?: any, b?: any, c?: any){
+  equals(a?: any, b?: any, c?: any) {
     if(
       a instanceof Vector || // vector instance
       (typeof a === 'number' && typeof b === 'number') ||
@@ -40,5 +40,13 @@ export class Vector extends p5Vector implements IPoint {
       return this.x === a.x && this.y === a.y;
     }
     return false;
+  }
+
+  toArray() {
+    return [this.x, this.y];
+  }
+
+  static random2D() {
+    return new Vector(super.random2D());
   }
 }

@@ -14,6 +14,7 @@ import { pI } from './utils/pI';
 import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
 import particles from './utils/particles';
+import { setupFractureTest } from './utils/setupFractureTest';
 
 export const initGame = () => {
 
@@ -199,6 +200,8 @@ export const initGame = () => {
     setupAngleTest(app);
   } else if(settings.test.transition){
     setupTransitionTest(app);
+  } else if(settings.test.fracture){
+    setupFractureTest(app);
   } else {
     setup();
   }

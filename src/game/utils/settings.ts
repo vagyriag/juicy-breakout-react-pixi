@@ -2,13 +2,13 @@ export const settings = {
   brick: {
     transition: true,
     wobble: true,
-    sound: true,
+    sound: false,
     color: true,
   },
   paddle: {
     transition: true,
     squishy: true,
-    sound: true,
+    sound: false,
   },
   ball: {
     squishy: true,
@@ -18,7 +18,7 @@ export const settings = {
     bounceColor: true,
   },
   wall: {
-    sound: true,
+    sound: false,
   },
   general: {
     music: false,
@@ -26,6 +26,7 @@ export const settings = {
   test: {
     transition: false,
     angles: false,
+    fracture: true,
     autoStart: true,
   }
 }
