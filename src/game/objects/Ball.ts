@@ -1,5 +1,5 @@
 import { Sprite, Graphics, Application, Texture, DisplayObject } from "pixi.js";
-import { isTouchingReturnType, isTouching, withTouchTransform } from "../isTouching";
+import { isTouchingReturnType, withTouchTransform } from "../isTouching";
 import { Paddle } from "./Paddle";
 import { Vector } from "../utils/Vector";
 import { pI } from "../utils/pI";

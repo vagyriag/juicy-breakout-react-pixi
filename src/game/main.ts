@@ -110,8 +110,8 @@ export const initGame = () => {
         ball.bounce(touch);
         bricks.removeChild(brick);
         wobbleBricks(true);
-        return true;
       }
+      return touch;
     });
 
     sides.children.forEach(side => {
