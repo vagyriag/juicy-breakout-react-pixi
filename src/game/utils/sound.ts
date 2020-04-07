@@ -30,7 +30,8 @@ const load = () => {
   music = new Howl({
     src: `${dir}/juicy_breakout-theme.mp3`,
     autoplay: settings.general.music,
-    volume: .3
+    loop: true,
+    volume: .3,
   });
 }
 

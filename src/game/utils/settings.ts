@@ -20,7 +20,7 @@ export const settings = {
     sound: true,
   },
   general: {
-    music: true,
+    music: false,
   },
   test: {
     transition: false,
