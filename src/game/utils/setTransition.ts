@@ -16,11 +16,12 @@ interface Options {
   delay?: number;
   autoStart?: boolean;
   easingFunction?: (t: number) => number;
+  onFinish?: () => void;
 }
 
 export const setTransition = (obj: DisplayObject, options: Options) => {
 
-  const { duration, delay, autoStart = true, frames } = options;
+  const { duration, delay, autoStart = true, frames, onFinish } = options;
   const easingFunction = options.easingFunction || ((t) => t);
 
   const ticker = new Ticker();
@@ -75,6 +76,7 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
     if(outerStep >= 1){
       copyValuesFrom(frames[frames.length - 1]);
       ticker.destroy();
+      if(typeof onFinish === 'function') onFinish();
       return;
     }
 
