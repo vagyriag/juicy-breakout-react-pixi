@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/juicy-breakout-react-pixi/precache-manifest.baa35bfa0d2685e87ab10e7c235a1568.js"
+  "/juicy-breakout-react-pixi/precache-manifest.2c4ba8893517ac39a06d2734ae38385d.js"
 );
 
 self.addEventListener('message', (event) => {
