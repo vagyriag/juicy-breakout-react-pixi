@@ -29,9 +29,9 @@ const setup = (app: Application, cont: Container) => {
         "end": "#ff0000"
       },
       "speed": {
-        "start": 30,
-        "end": 50,
-        "minimumSpeedMultiplier": 1.03
+        "start": 40,
+        "end": 100,
+        "minimumSpeedMultiplier": 2
       },
       "acceleration": {
         "x": 0,
@@ -54,7 +54,7 @@ const setup = (app: Application, cont: Container) => {
       "blendMode": "normal",
       "frequency": 0.001,
       "emitterLifetime": 0.1,
-      "maxParticles": 100,
+      "maxParticles": 200,
       "pos": {
         "x": 0,
         "y": 0
