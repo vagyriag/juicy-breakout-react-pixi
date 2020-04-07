@@ -26,5 +26,6 @@ export const settings = {
   test: {
     transition: false,
     angles: false,
+    autoStart: true,
   }
 }

@@ -13,6 +13,7 @@ import { setupTransitionTest } from './utils/setupTransitionTest';
 import { pI } from './utils/pI';
 import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
+import particles from './utils/particles';
 
 export const initGame = () => {
 
@@ -38,6 +39,8 @@ export const initGame = () => {
 
   const setup = () => {
     const { width, height } = app.view;
+
+    particles.setup(app, group);
     
     // background
     const bg = new Graphics()
@@ -80,7 +83,13 @@ export const initGame = () => {
         duration: 500,
         delay: 400,
         easingFunction: Ease.out(3),
-        onFinish: () => canMovePaddle = true,
+        onFinish: () => {
+          canMovePaddle = true;
+          if(settings.test.autoStart) {
+            handleMouseClick(null as any);
+            paddle.position.y = -100;
+          }
+        }
       });
     }
 
@@ -102,6 +111,7 @@ export const initGame = () => {
   const process = () => {
     paddle.process();
     if(!ball.inStage) return;
+    particles.update();
 
     const touch = isTouching(paddle, ball, 1);
     const bounce = touch && ball.bounce(touch, paddle);
@@ -137,6 +147,8 @@ export const initGame = () => {
 
   const wobbleBricks = (touchedBrick?: boolean) => {
     if(!ball.inStage) return;
+    particles.hit(ball.position)
+
     const minDist = Brick.tx.width;
     const maxDist = app.view.width/2;
     const point = new Vector(ball.position);
