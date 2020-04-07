@@ -1,5 +1,5 @@
 import { Sprite, Graphics, Application, Texture, DisplayObject } from "pixi.js";
-import { isTouchingReturnType, isTouching } from "../isTouching";
+import { isTouchingReturnType, isTouching, withTouchTransform } from "../isTouching";
 import { Paddle } from "./Paddle";
 import { Vector } from "../utils/Vector";
 import { pI } from "../utils/pI";
@@ -8,7 +8,7 @@ import Bezier from 'bezier-easing';
 import { settings } from "../utils/settings";
 import { Ease } from "../utils/Ease";
 
-export class Ball extends Sprite {
+export class Ball extends Sprite implements withTouchTransform {
 
   static tx: Texture;
   static txBounce: Texture;
@@ -23,6 +23,11 @@ export class Ball extends Sprite {
 
   lastTouchedObj: DisplayObject|null = null;
   lastTouchedTime: number = 0;
+
+  touchTransform = {
+    scale: new Vector(1, 1),
+    rotation: 0,
+  }
 
   static createTexture(app: Application, color: number, colorBounce: number, size: number) {
     const gr = new Graphics();

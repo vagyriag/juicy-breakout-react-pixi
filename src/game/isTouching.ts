@@ -8,10 +8,17 @@ export interface isTouchingReturnType {
   left: boolean;
 }
 
-export const isTouching = (objA: DisplayObject, objB: DisplayObject, type: 0|1 = 0): isTouchingReturnType|false => {
+export interface withTouchTransform extends DisplayObject {
+  touchTransform: {
+    scale?: Vector;
+    rotation?: number;
+  }
+}
+
+export const isTouching = (objA: DisplayObject|withTouchTransform, objB: DisplayObject|withTouchTransform, type: 0|1 = 0): isTouchingReturnType|false => {
   if(!objA.renderable || !objB.renderable) return false;
-  const boxA = objA.getBounds();
-  const boxB = objB.getBounds();
+  const boxA = getBoundsHelper(objA);
+  const boxB = getBoundsHelper(objB);
   const touch = isTouchingBox(boxA, boxB);
   if(touch){
     const { sides } = getTouchingSidesInfo(boxA, boxB, type);
@@ -51,4 +58,23 @@ const isTouchingBox = (boxA: Rectangle, boxB: Rectangle) => {
   const top = boxB.y + boxB.height > boxA.y;
   const bottom = boxB.y < boxA.y + boxA.height;
   return left && right && top && bottom;
+}
+
+const getBoundsHelper = (obj: DisplayObject|withTouchTransform) => {
+  let bounds;
+  if('touchTransform' in obj){
+    const { scale, rotation } = obj.touchTransform;
+    const prevScale = new Vector(obj.scale);
+    const prevRotation = obj.rotation;
+    if(scale instanceof Vector) obj.scale.copyFrom(scale);
+    if(typeof rotation === 'number') obj.rotation = rotation;
+    obj.updateTransform();
+    bounds = obj.getBounds(true);
+    if(scale instanceof Vector) obj.rotation = prevRotation;
+    if(typeof rotation === 'number') obj.scale.copyFrom(prevScale);
+    obj.updateTransform();
+  } else {
+    bounds = obj.getBounds(true);
+  }
+  return bounds;
 }
