@@ -41,5 +41,7 @@ export const setupBricks = (app: Application, bricks: Container, color: number, 
       });
     });
 
+  bricks.position.copyFrom(new Vector(bricks).add(bricksW * .5, bricksH * .5));
+
   return bricks;
 }

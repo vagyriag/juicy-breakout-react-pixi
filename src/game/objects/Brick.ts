@@ -34,7 +34,7 @@ export class Brick extends Sprite {
     const wH = box.width * .5;
     const hH = box.height * .5;
     this.pivot.set(wH, hH);
-    this.position.set(x + wH, y + hH);
+    this.position.set(x, y);
   }
 
   changeTexture(n: number) {

@@ -58,7 +58,7 @@ export const initGame = () => {
 
     // setup bricks
     bricks = setupBricks(app, bricks, 0xcc11cc, width * .8, height * .35, 8, 6, 20);
-    bricks.position.set(width * .1, width * .1);
+    bricks.position.copyFrom(new Vector(bricks).add(width * .1, width * .1));
     group.addChild(bricks);
 
     // setup ball
@@ -154,9 +154,9 @@ export const initGame = () => {
 
     const minDist = Brick.tx.width;
     const maxDist = app.view.width/2;
-    const point = new Vector(ball.position);
+    const point = new Vector(ball);
     bricks.children.forEach(brick => {
-      const dist = !touchedBrick ? 0 : point.dist(new Vector(brick.position));
+      const dist = !touchedBrick ? 0 : new Vector(brick.getGlobalPosition()).dist(point);
       const delay = !touchedBrick ? Math.random() * 70 : pI.map(dist, minDist, maxDist, 0, 200, true);
       const color = !touchedBrick ? Math.random() : dist/maxDist;
 
