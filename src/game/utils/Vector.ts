@@ -50,7 +50,7 @@ export class Vector extends p5Vector implements IPoint {
    * p5.Vector definitions
    */
   static random2D() {
-    return new Vector(p5Vector.random2D());
+    return new Vector(super.random2D());
   }
   add(x: number, y?: number | undefined, z?: number | undefined): Vector;
   add(value: Vector | number[]): Vector;
