@@ -70,4 +70,10 @@ export class Vector extends p5Vector implements IPoint {
   mult(n: number): Vector{
     return super.mult(n) as Vector;
   }
+  lerp(x: Vector, amt: number): Vector;
+  lerp(x: number, y: number, z: number, amt: number): Vector;
+  lerp(a: any, b: any, c?: any, d?: any){
+    if(a instanceof Vector) return super.lerp(a, b);
+    return super.lerp(a, b, c, d);
+  }
 }

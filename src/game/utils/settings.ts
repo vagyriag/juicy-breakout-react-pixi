@@ -26,7 +26,8 @@ export const settings = {
   test: {
     transition: false,
     angles: false,
-    fracture: true,
+    fracture: false,
+    lightning: true,
     autoStart: true,
   }
 }

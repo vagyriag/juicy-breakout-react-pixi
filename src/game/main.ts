@@ -15,6 +15,7 @@ import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
 import particles from './utils/particles';
 import { setupFractureTest } from './utils/setupFractureTest';
+import { setupLightningTest } from './utils/setupLightningTest';
 
 export const initGame = () => {
 
@@ -202,6 +203,8 @@ export const initGame = () => {
     setupTransitionTest(app);
   } else if(settings.test.fracture){
     setupFractureTest(app);
+  } else if(settings.test.lightning){
+    setupLightningTest(app);
   } else {
     setup();
   }
