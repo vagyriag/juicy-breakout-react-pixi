@@ -16,6 +16,7 @@ import { Brick } from './objects/Brick';
 import particles from './utils/particles';
 import { setupFractureTest } from './utils/setupFractureTest';
 import { setupLightningTest } from './utils/setupLightningTest';
+import { setupInterpolationTest } from './utils/setupInterpolationTest';
 
 export const initGame = () => {
 
@@ -205,6 +206,8 @@ export const initGame = () => {
     setupFractureTest(app);
   } else if(settings.test.lightning){
     setupLightningTest(app);
+  } else if(settings.test.interpolation){
+    setupInterpolationTest();
   } else {
     setup();
   }
