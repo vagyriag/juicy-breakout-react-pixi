@@ -2,8 +2,7 @@ import { Brick } from "../objects/Brick";
 import { Application, Graphics, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { Vector } from "./Vector";
-import { getBoxLineIntersections } from "./getBoxLineIntersections";
-import { divideLineInPoints } from "./divideLineInPoints";
+import { getBoxParts } from "./getBoxParts";
 
 export const setupFractureTest = (app: Application) => {
   const { width, height } = app.view;
@@ -30,29 +29,31 @@ export const setupFractureTest = (app: Application) => {
     objB.position.copyFrom(ev.data.global);
 
     gr.clear();
-
-    gr.beginFill(0x000)
-      .drawCircle(objB.x, objB.y, 4)
-      .endFill();
-
+    
     const line = new Vector(objB).add(objB.vel);
-    gr.lineStyle(2, 0xff0000)
-      .moveTo(objB.x, objB.y)
-      .lineTo(line.x, line.y);
+
+    gr.beginFill(0xccf111)
+      .drawCircle(line.x, line.y, 4)
+      .endFill();
     
     const bounds = objA.getBounds();
-    let points = getBoxLineIntersections(bounds, new Vector(objB), line);
+    const points = getBoxParts(bounds, new Vector(objB), line);
+    
+    if(points){
+      gr.beginFill(0xff0000);
+      points.left.forEach((pt, i) => {
+          gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
+      });
+      gr.closePath();
+      gr.endFill();
 
-    if(points.length === 2) {
-      const v = divideLineInPoints(points[0], points[1], 2);
-      points = points.concat(v);
+      gr.beginFill(0x00ff00);
+      points.right.forEach((pt, i) => {
+          gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
+      });
+      gr.closePath();
+      gr.endFill();
     }
-
-    points.forEach(pt => {
-      gr.beginFill(0xff0000)
-        .drawCircle(pt.x, pt.y, 4)
-        .endFill();
-    });
   }
 
   app.stage.on('click', setDirection);

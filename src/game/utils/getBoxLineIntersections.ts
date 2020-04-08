@@ -1,13 +1,10 @@
 import { Rectangle } from "pixi.js";
 import { Vector } from "./Vector";
 import { getLinesIntersection } from "./getLinesIntersection";
+import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
 
-export const getBoxLineIntersections = (box: Rectangle, pointA: Vector, pointB: Vector): Vector[] => {
-  const lt = new Vector(box);
-  const rt = new Vector(box).add(box.width, 0);
-  const lb = new Vector(box).add(0, box.height);
-  const rb = new Vector(box).add(box.width, box.height);
-
+export const getBoxLineIntersections = (box: Rectangle|getBoxVerticesReturnType, pointA: Vector, pointB: Vector): Vector[] => {
+  const { lt, rt, rb, lb } = box instanceof Rectangle ? getBoxVertices(box) : box;
   const sides = [ [lt, rt], [rt, rb], [rb, lb], [lb, lt] ];
 
   const points: Vector[] = [];
