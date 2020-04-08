@@ -52,6 +52,16 @@ export class Vector extends p5Vector implements IPoint {
   static random2D() {
     return new Vector(super.random2D());
   }
+  static fromAngle(angle: number, length?: number) {
+    return new Vector(super.fromAngle(angle, length));
+  }
+  static sub(v1: Vector, v2: Vector): Vector;
+  static sub(v1: Vector, v2: Vector, target?: Vector) {
+    if(typeof target !== 'undefined'){
+      return super.sub(v1, v2, target);
+    }
+    return new Vector(super.sub(v1, v2));
+  }
   add(x: number, y?: number | undefined, z?: number | undefined): Vector;
   add(value: Vector | number[]): Vector;
   add(...params: any[]): Vector {

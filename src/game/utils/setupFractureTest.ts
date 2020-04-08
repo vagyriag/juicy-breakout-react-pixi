@@ -44,8 +44,8 @@ export const setupFractureTest = (app: Application) => {
     let points = getBoxLineIntersections(bounds, new Vector(objB), line);
 
     if(points.length === 2) {
-      const v = divideLineInPoints(points[0], points[1], 3);
-      points = points.concat(v as any);
+      const v = divideLineInPoints(points[0], points[1], 2);
+      points = points.concat(v);
     }
 
     points.forEach(pt => {
