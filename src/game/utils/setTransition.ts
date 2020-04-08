@@ -1,6 +1,7 @@
 import { DisplayObject, Ticker } from "pixi.js";
 import { Vector } from "p5";
 import { pI } from "./pI";
+import { setInterpolation, Interpolation } from "./setInterpolation";
 
 interface Transformation {
   time?: number;
@@ -22,24 +23,30 @@ interface Options {
 export const setTransition = (obj: DisplayObject, options: Options) => {
 
   const { duration, delay, autoStart = true, frames, onFinish } = options;
-  const easingFunction = options.easingFunction || ((t) => t);
-
-  const ticker = new Ticker();
-  let initialTime: number;
   
   // flags
   let initCalled = false;
-  let started = false;
   const doPosition = frames.every(s => s.position);
   const doScale    = frames.every(s => s.scale);
   const doRotation = frames.every(s => typeof s.rotation === 'number');
   const doAlpha    = frames.every(s => typeof s.alpha === 'number');
   const doNothing  = (!doPosition && !doScale && !doRotation && !doAlpha) || frames.length < 2;
 
+  let inter: null|Interpolation = null;
+
   // initial processing
   const initialProcessing = () => {
     // calculate time for steps
-    if(!doNothing) calculateStepTimes();
+    if(!doNothing) {
+      inter = setInterpolation({
+        ...options,
+        frames: frames.map(({ time, position = {} as any, scale = {} as any, rotation, alpha }) => ({
+          time,
+          value: [ position.x, position.y, scale.x, scale.y, rotation, alpha ],
+        })),
+        onChange: process,
+      });
+    }
 
     // start if has delay or autoStart
     if((delay && delay > 0 && autoStart === true) || autoStart) {
@@ -50,12 +57,9 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   // start transition
   const start = () => {
-    if(doNothing || started) return;
+    if(doNothing || !inter) return;
     if(!initCalled) copyValuesFrom(frames[0]);
-    initialTime = Date.now();
-    ticker.add(process);
-    ticker.start();
-    started = true;
+    inter.start();
   }
 
   // set initial values
@@ -66,97 +70,27 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
   }
 
   // ticker process
-  const process = () => {
-    // calculate main step (beginning to end of transition)
-    const now = Date.now();
-    const diff = now - initialTime;
-    const outerStep = diff / duration;
-
-    // set end position
-    if(outerStep >= 1){
-      copyValuesFrom(frames[frames.length - 1]);
-      ticker.destroy();
-      if(typeof onFinish === 'function') onFinish();
-      return;
-    }
-
-    // get next frame index
-    const index = frames.findIndex(({ time }) => (outerStep < time!));
-    // get frames for current transition
-    const frameA = frames[index - 1];
-    const frameB = frames[index];
-    // calculate inner step (number between 0 and 1, inside the frames time range)
-    const innerStep = pI.map(outerStep, frameA.time!, frameB.time!, 0, 1, true);
-    // calculate modifier (y position for x = innerStep)
-    const res = easingFunction(innerStep);
-    // apply to relevant parameter
+  const process = (value: number|number[]) => {
+    const [ posX, posY, scaleX, scaleY, rotation, alpha ] = value as number[];
     if(doPosition){
-      obj.position.x = calc(res, frameA.position!.x, frameB.position!.x);
-      obj.position.y = calc(res, frameA.position!.y, frameB.position!.y);
+      obj.position.x = posX;
+      obj.position.y = posY;
     }
     if(doScale){
-      obj.scale.x = calc(res, frameA.scale!.x, frameB.scale!.x);
-      obj.scale.y = calc(res, frameA.scale!.y, frameB.scale!.y);
+      obj.scale.x = scaleX;
+      obj.scale.y = scaleY;
     }
-    if(doRotation) obj.rotation = calc(res, frameA.rotation!, frameB.rotation!);
-    if(doAlpha) obj.alpha = calc(res, frameA.alpha!, frameB.alpha!);
+    if(doRotation) obj.rotation = rotation;
+    if(doAlpha) obj.alpha = alpha;
   }
 
-  // map src to range
-  const calc = (src: number, a: number, b: number) => a + (b - a) * src;
-  
   const copyValuesFrom = (src: Transformation) => {
     if(doPosition) obj.position.copyFrom(src.position as any);
     if(doScale)    obj.scale.copyFrom(src.scale as any);
     if(doRotation) obj.rotation = src.rotation!;
     if(doAlpha)    obj.alpha = src.alpha!;
   }
-
-  const calculateStepTimes = () => {
-    // set first and last frames with 0 and 1
-    frames[0].time = 0;
-    frames[frames.length - 1].time = 1;
-
-    // only makes sense if there's more than 2
-    if(frames.length === 2) return;
-
-    // get frames with time set
-    const setted = frames // map to index or -1
-      .map(({ time: t }, i) => (typeof t === 'number' && (t >= 0 || t <= 1) ? i : -1))
-      .filter(n => n >= 0); // remove -1
-
-    setted.slice(1) // remove first (0)
-      .map((curr, i) => {
-        const prev = setted[i];
-        // only return group if is not consecutive
-        if(prev + 1 < curr) return [prev,curr];
-        return null;
-      })
-      .filter(v => v) // remove emtpy values
-      .forEach(([aIndex, bIndex]: any) => {
-        //console.log(aIndex, bIndex);
-        const frameA = frames[aIndex];
-        let frameB = frames[bIndex];
-        // to prevent range errors
-        if(frameA.time! > frameB.time!) frameB = frameA;
-        // dime difference in range
-        const timeDiff = frameB.time! - frameA.time!;
-        // diff between indexes (spaces between)
-        const indexDiff = bIndex - aIndex;
-        // time division
-        const timeStep = timeDiff / indexDiff;
-        // loop spaces to fill (indexDiff - 1)
-        Array.from({ length: indexDiff - 1 })
-          .forEach((_, i) => {
-            // empty index
-            const modIndex = aIndex + i + 1;
-            // beginning + step
-            const modTime = frameA.time! + timeStep * (i + 1);
-            frames[modIndex].time = modTime;
-          });
-      });
-  }
-
+  
   //
   initialProcessing();
 

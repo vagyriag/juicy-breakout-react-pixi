@@ -1,5 +1,5 @@
 import { Ease } from "./Ease";
-import { interpolation } from "./interpolation";
+import { setInterpolation } from "./setInterpolation";
 
 export const setupInterpolationTest = () => {
   const div = document.createElement('div');
@@ -9,12 +9,12 @@ export const setupInterpolationTest = () => {
   div.style.backgroundColor = 'red';
   div.style.top = '100px';
   document.body.appendChild(div);
-  interpolation({
+  setInterpolation({
     frames: [
-      { n: 0 },
-      { n: 200 },
-      { n: 50 },
-      { n: window.innerWidth }
+      { value: 0 },
+      { value: 200 },
+      { value: 50 },
+      { value: window.innerWidth }
     ],
     duration: 3000,
     easingFunction: Ease.inOut(2),

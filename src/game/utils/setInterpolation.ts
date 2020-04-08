@@ -4,20 +4,26 @@ import { pI } from "./pI";
 interface Options {
   frames: {
     time?: number;
-    n: number;
+    value: number|number[];
   }[];
   duration: number;
-  onChange: (n: number) => void;
+  onChange: (value: number|number[]) => void;
   delay?: number;
   autoStart?: boolean;
   easingFunction?: (t: number) => number;
   onFinish?: () => void;
 }
 
-export const interpolation = (options: Options) => {
+export interface Interpolation {
+  start: () => void;
+}
+
+export const setInterpolation = (options: Options): Interpolation => {
 
   const { duration, delay, autoStart = true, frames, onFinish, onChange } = options;
   const easingFunction = options.easingFunction || ((t) => t);
+
+  const resIsNum = typeof frames[0].value === 'number';
 
   const ticker = new Ticker();
   let initialTime: number;
@@ -54,7 +60,7 @@ export const interpolation = (options: Options) => {
 
     // set end position
     if(outerStep >= 1){
-      onChange(frames[frames.length - 1].n);
+      onChange(frames[frames.length - 1].value);
       ticker.destroy();
       if(typeof onFinish === 'function') onFinish();
       return;
@@ -70,7 +76,13 @@ export const interpolation = (options: Options) => {
     // calculate modifier (y position for x = innerStep)
     const res = easingFunction(innerStep);
     // call onChange
-    onChange(calc(res, frameA.n, frameB.n));
+    const result = ((resIsNum ? [frameA.value] : frameA.value) as number[])
+      .map((nA, index) => {
+        if(typeof nA === 'undefined') return undefined;
+        const valuesB = (resIsNum ? [frameB.value] : frameB.value) as number[];
+        return calc(res, nA, valuesB[index] || 0);
+      });
+    onChange(result as number|number[]);
   }
 
   // map src to range
