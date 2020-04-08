@@ -40,7 +40,6 @@ export const setupLightningTest = (app: Application) => {
     if(!touch) return;
 
     gr.clear();
-
     
     const bounds = objA.getBounds();
     const vertices = getBoxVertices(bounds);
@@ -63,9 +62,9 @@ export const setupLightningTest = (app: Application) => {
 const getPointsByTouch = (touch: isTouchingReturnType, vert: getBoxVerticesReturnType) => {
   const rA = Math.random() * .4 + .3;
   const rB = Math.random() * .4 + .3;
-  
-  const a = vert.lt.lerp(vert.rt, rA);
-  const b = vert.lb.lerp(vert.rb, rB);
 
-  return [a, b];
+  if(touch.top) return [ vert.lt.lerp(vert.rt, rA), vert.lb.lerp(vert.rb, rB) ];
+  if(touch.right) return [ vert.rt.lerp(vert.rb, rA), vert.lt.lerp(vert.lb, rB) ];
+  if(touch.bottom) return [ vert.lb.lerp(vert.rb, rA), vert.lt.lerp(vert.rt, rB) ];
+  return [ vert.lt.lerp(vert.lb, rA), vert.rt.lerp(vert.rb, rB) ];
 }
