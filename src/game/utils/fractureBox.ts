@@ -4,11 +4,8 @@ import { getBoxLineIntersections } from "./getBoxLineIntersections";
 import { divideLineInPoints } from "./divideLineInPoints";
 import { Vector } from "./Vector";
 
-export const getBoxParts = (box: Rectangle|getBoxVerticesReturnType, pointA: Vector, pointB: Vector) => {
+export const fractureBox = (box: Rectangle|getBoxVerticesReturnType, a: Vector, b: Vector) => {
   const vertices = box instanceof Rectangle ? getBoxVertices(box) : box;
-  const points = getBoxLineIntersections(vertices, pointA, pointB);
-  if(points.length < 2) return false;
-  const [ a, b ] = points;
   const [ newPoints, part ] = divideLineInPoints(a, b, 2);
   newPoints.forEach((point) => {
     point.add(Vector.random2D().mult(part * .45));

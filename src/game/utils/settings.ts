@@ -28,7 +28,7 @@ export const settings = {
     transition: false,
     angles: false,
     fracture: false,
-    lightning: false,
+    lightning: true,
     autoStart: true,
   }
 }

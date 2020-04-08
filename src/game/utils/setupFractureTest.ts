@@ -2,7 +2,9 @@ import { Brick } from "../objects/Brick";
 import { Application, Graphics, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { Vector } from "./Vector";
-import { getBoxParts } from "./getBoxParts";
+import { fractureBox } from "./fractureBox";
+import { getBoxVertices } from "./getBoxVertices";
+import { getBoxLineIntersections } from "./getBoxLineIntersections";
 
 export const setupFractureTest = (app: Application) => {
   const { width, height } = app.view;
@@ -37,18 +39,20 @@ export const setupFractureTest = (app: Application) => {
       .endFill();
     
     const bounds = objA.getBounds();
-    const points = getBoxParts(bounds, new Vector(objB), line);
+    const vertices = getBoxVertices(bounds);
+    const points = getBoxLineIntersections(vertices, new Vector(objB), line);
+    const res = points.length === 2 && fractureBox(bounds, points[0], points[1]);
     
-    if(points){
+    if(res){
       gr.beginFill(0xff0000);
-      points.left.forEach((pt, i) => {
+      res.left.forEach((pt, i) => {
           gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
       });
       gr.closePath();
       gr.endFill();
 
       gr.beginFill(0x00ff00);
-      points.right.forEach((pt, i) => {
+      res.right.forEach((pt, i) => {
           gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
       });
       gr.closePath();

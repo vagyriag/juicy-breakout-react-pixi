@@ -1,10 +1,10 @@
 import { Brick } from "../objects/Brick";
 import { Application, Graphics, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
-import { Vector } from "./Vector";
-import { getBoxParts } from "./getBoxParts";
+import { fractureBox } from "./fractureBox";
 import { isTouching, isTouchingReturnType } from "../isTouching";
 import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
+import { Vector } from "./Vector";
 
 export const setupLightningTest = (app: Application) => {
   const { width, height } = app.view;
@@ -13,7 +13,7 @@ export const setupLightningTest = (app: Application) => {
   const objA = new Brick(width * .5, height * .5);
   app.stage.addChild(objA);
 
-  Ball.createTexture(app, 0xccf111, 0xccf111, 20);
+  Ball.createTexture(app, 0xccf111, 0xccf111, 3);
   const objB = new Ball();
   app.stage.addChild(objB);
 
@@ -45,17 +45,20 @@ export const setupLightningTest = (app: Application) => {
     const vertices = getBoxVertices(bounds);
     
     const [ pointA, pointB ] = getPointsByTouch(touch, vertices);
-    const points = getBoxParts(vertices, pointA, pointB);
+    const points = fractureBox(vertices, pointA, pointB);
     
     if(points){
+      const { fracture } = points;
+      const extra = Vector.sub(pointB, pointA).mult(.7).add(pointB);
+      fracture.push(extra);
       gr.lineStyle(2, 0xff0000);
-      points.fracture.forEach((pt, i) => {
+      fracture.forEach((pt, i) => {
           gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
       });
     }
   }
 
-  app.stage.on('mousemove', process);
+  app.stage.on('click', process);
 }
 
 
