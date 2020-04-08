@@ -3,6 +3,7 @@ import { Application, Graphics, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { Vector } from "./Vector";
 import { getBoxLineIntersections } from "./getBoxLineIntersections";
+import { divideLineInPoints } from "./divideLineInPoints";
 
 export const setupFractureTest = (app: Application) => {
   const { width, height } = app.view;
@@ -40,7 +41,13 @@ export const setupFractureTest = (app: Application) => {
       .lineTo(line.x, line.y);
     
     const bounds = objA.getBounds();
-    const points = getBoxLineIntersections(bounds, new Vector(objB), line);
+    let points = getBoxLineIntersections(bounds, new Vector(objB), line);
+
+    if(points.length === 2) {
+      const v = divideLineInPoints(points[0], points[1], 3);
+      points = points.concat(v as any);
+    }
+
     points.forEach(pt => {
       gr.beginFill(0xff0000)
         .drawCircle(pt.x, pt.y, 4)
