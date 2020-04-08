@@ -1,6 +1,5 @@
-import { DisplayObject, Ticker } from "pixi.js";
+import { DisplayObject } from "pixi.js";
 import { Vector } from "p5";
-import { pI } from "./pI";
 import { setInterpolation, Interpolation } from "./setInterpolation";
 
 interface Transformation {
@@ -22,7 +21,7 @@ interface Options {
 
 export const setTransition = (obj: DisplayObject, options: Options) => {
 
-  const { duration, delay, autoStart = true, frames, onFinish } = options;
+  const { frames } = options;
   
   // flags
   let initCalled = false;
@@ -34,44 +33,39 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
 
   let inter: null|Interpolation = null;
 
+  // transform input frames to interpolation value array
+  const interFrames = frames
+    .map(({ time, position = {} as any, scale = {} as any, rotation, alpha }) => ({
+      time,
+      value: [ position.x, position.y, scale.x, scale.y, rotation, alpha ],
+    }));
+
   // initial processing
   const initialProcessing = () => {
-    // calculate time for steps
-    if(!doNothing) {
-      inter = setInterpolation({
-        ...options,
-        frames: frames.map(({ time, position = {} as any, scale = {} as any, rotation, alpha }) => ({
-          time,
-          value: [ position.x, position.y, scale.x, scale.y, rotation, alpha ],
-        })),
-        onChange: process,
-      });
-    }
-
-    // start if has delay or autoStart
-    if((delay && delay > 0 && autoStart === true) || autoStart) {
-      init();
-      setTimeout(() => start(), delay || 0);
-    }
+    if(doNothing) return;
+    inter = setInterpolation({
+      ...options,
+      frames: interFrames,
+      onChange: setValues,
+    });
   }
 
   // start transition
   const start = () => {
-    if(doNothing || !inter) return;
-    if(!initCalled) copyValuesFrom(frames[0]);
-    inter.start();
+    if(doNothing) return;
+    if(!initCalled) setValues(interFrames[0].value)
+    inter!.start();
   }
 
   // set initial values
   const init = () => {
     if(doNothing) return;
-    copyValuesFrom(frames[0]);
+    setValues(interFrames[0].value);
     initCalled = true;
   }
 
-  // ticker process
-  const process = (value: number|number[]) => {
-    const [ posX, posY, scaleX, scaleY, rotation, alpha ] = value as number[];
+  const setValues = (values: number|number[]) => {
+    const [ posX, posY, scaleX, scaleY, rotation, alpha ] = values as number[];
     if(doPosition){
       obj.position.x = posX;
       obj.position.y = posY;
@@ -82,13 +76,6 @@ export const setTransition = (obj: DisplayObject, options: Options) => {
     }
     if(doRotation) obj.rotation = rotation;
     if(doAlpha) obj.alpha = alpha;
-  }
-
-  const copyValuesFrom = (src: Transformation) => {
-    if(doPosition) obj.position.copyFrom(src.position as any);
-    if(doScale)    obj.scale.copyFrom(src.scale as any);
-    if(doRotation) obj.rotation = src.rotation!;
-    if(doAlpha)    obj.alpha = src.alpha!;
   }
   
   //
