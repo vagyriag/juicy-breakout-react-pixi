@@ -11,7 +11,7 @@ export const setupLightningTest = (app: Application) => {
   const objA = new Brick(width * .5, height * .5);
   app.stage.addChild(objA);
 
-  Ball.createTexture(app, 0xccf111, 0xccf111, 3);
+  Ball.createTexture(app, 0xccf111, 0xccf111, 0);
   const objB = new Ball();
   app.stage.addChild(objB);
 
@@ -35,6 +35,7 @@ export const setupLightningTest = (app: Application) => {
 
     if(!touch) return;
     
+    // Array.from({ length: 10 }).forEach((_, i) => setTimeout(() => breakBrick(app, touch, objA, objB), 100 * i));
     breakBrick(app, touch, objA, objB);
   }
 
