@@ -82,7 +82,7 @@ export const setInterpolation = (options: Options): Interpolation => {
         const valuesB = (resIsNum ? [frameB.value] : frameB.value) as number[];
         return calc(res, nA, valuesB[index] || 0);
       });
-    onChange(result as number|number[]);
+    onChange((resIsNum ? result[0] : result) as number|number[]);
   }
 
   // map src to range
