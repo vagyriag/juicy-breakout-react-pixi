@@ -17,6 +17,7 @@ import particles from './utils/particles';
 import { setupFractureTest } from './utils/setupFractureTest';
 import { setupLightningTest } from './utils/setupLightningTest';
 import { setupInterpolationTest } from './utils/setupInterpolationTest';
+import { breakBrick } from './utils/breakBrick';
 
 export const initGame = () => {
 
@@ -130,6 +131,7 @@ export const initGame = () => {
       if(brick instanceof Brick) brick.process();
       const touch = isTouching(brick, ball);
       if(touch){
+        breakBrick(app, touch, brick, ball);
         ball.bounce(touch);
         bricks.removeChild(brick);
         wobbleBricks(true);
