@@ -49,23 +49,7 @@ export class Side extends Sprite {
     if(!point) return;
     
     setInterpolation({
-      frames: [
-        {
-          value: 0,
-        },
-        {
-          value: 1,
-        },
-        {
-          value: -.4,
-        },
-        {
-          value: .6,
-        },
-        {
-          value: 0,
-        }
-      ],
+      frames: [ 0, 1, -.4, .6, 0 ],
       easingFunction: Ease.inOut(3),
       duration: 600,
       onChange: (val: number|number[]) => {

@@ -5,7 +5,7 @@ export interface InterpolationOptions {
   frames?: {
     time?: number;
     value: number|number[];
-  }[];
+  }[] | number[];
   duration: number;
   onChange: (value: number|number[]) => void;
   delay?: number;
@@ -23,7 +23,11 @@ export const setInterpolation = (options: InterpolationOptions): Interpolation =
 
   const { duration, delay, onFinish, onChange, autoStart = true, autoInit = true } = options;
   const easingFunction = options.easingFunction || ((t) => t);
-  const frames = options.frames || [ { value: 0 }, { value: 1 } ];
+
+  options.frames = options.frames || [ 0, 1 ];
+  const frames: { time:number, value: number }[] = typeof options.frames[0] === 'number' 
+    ? (options.frames as number[]).map((n: number) => ({ value: n }))
+    : options.frames as any[];
 
   const resIsNum = typeof frames[0].value === 'number';
 
