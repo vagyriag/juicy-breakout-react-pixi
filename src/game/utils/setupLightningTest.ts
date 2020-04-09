@@ -5,6 +5,8 @@ import { fractureBox } from "./fractureBox";
 import { isTouching, isTouchingReturnType } from "../isTouching";
 import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
 import { Vector } from "./Vector";
+import { interpolateLine } from "./interpolateLine";
+import { Ease } from "./Ease";
 
 export const setupLightningTest = (app: Application) => {
   const { width, height } = app.view;
@@ -18,8 +20,6 @@ export const setupLightningTest = (app: Application) => {
   app.stage.addChild(objB);
 
   app.stage.interactive = true;
-  const gr = new Graphics();
-  app.stage.addChild(gr);
 
   const info = document.createElement('pre');
   info.style.position = 'fixed';
@@ -38,8 +38,6 @@ export const setupLightningTest = (app: Application) => {
     info.innerText = side || '';
 
     if(!touch) return;
-
-    gr.clear();
     
     const bounds = objA.getBounds();
     const vertices = getBoxVertices(bounds);
@@ -48,13 +46,21 @@ export const setupLightningTest = (app: Application) => {
     const points = fractureBox(vertices, pointA, pointB);
     
     if(points){
-      const { fracture } = points;
       const extra = Vector.sub(pointB, pointA).mult(.7).add(pointB);
-      fracture.push(extra);
-      gr.lineStyle(2, 0xff0000);
-      fracture.forEach((pt, i) => {
-          gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
+      const lightning = [ ...points.fracture, extra ];
+
+      const gr = new Graphics();
+      interpolateLine(gr, {
+        vectors: lightning,
+        duration: 200,
+        easingFunction: Ease.in(2),
+        onFinish: () => 
+          setTimeout(() => {
+            app.stage.removeChild(gr);
+            gr.destroy();
+          }, 40)
       });
+      app.stage.addChild(gr);
     }
   }
 
