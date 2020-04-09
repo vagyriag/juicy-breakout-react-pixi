@@ -35,8 +35,8 @@ export const setupLightningTest = (app: Application) => {
 
     if(!touch) return;
     
-    // Array.from({ length: 10 }).forEach((_, i) => setTimeout(() => breakBrick(app, touch, objA, objB), 100 * i));
-    breakBrick(app, touch, objA, objB);
+    Array.from({ length: 10 }).forEach((_, i) => setTimeout(() => breakBrick(app, touch, objA, objB), 100 * i));
+    //breakBrick(app, touch, objA, objB);
   }
 
   app.stage.on('click', process);

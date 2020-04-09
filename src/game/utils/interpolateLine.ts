@@ -2,32 +2,52 @@ import { Vector } from "./Vector";
 import { setInterpolation, InterpolationOptions } from "./setInterpolation";
 import { Graphics } from "pixi.js";
 
-interface Options extends Omit<InterpolationOptions, 'frames'|'onChange'> {
+interface Options extends Omit<InterpolationOptions, 'frames'|'onChange'|'duration'|'easingFunction'> {
   vectors: Vector[];
-  enter?: boolean;
-  exit?: boolean;
-  delayBetween?: number;
+  enter?: {
+    duration: number;
+  };
+  exit?: {
+    duration: number;
+    delay?: number;
+  };
 }
 
-export const interpolateLine = (gr: Graphics, { vectors, enter: doEnter = true, exit: doExit, delayBetween = 100, ...options }: Options) => {
-  // vectors = vectors.slice().reverse();
+export const interpolateLine = (gr: Graphics, { vectors, enter = { duration: 0 }, exit = { duration: 0 }, ...options }: Options) => {
+  // default delay
+  if(typeof exit.delay !== 'number') exit.delay = 0;
+
   // total line length
   const totalLength = vectors.slice(1).reduce((acc, curr, index) => {
     return acc + Vector.sub(curr, vectors[index]).mag();
   }, 0);
 
-  const draw = (t: number|number[]) => {
-    const enterVal = t as number * totalLength;
-    const exitVal = enterVal - 30;
+  const totalDuration = enter.duration + exit.delay + exit.duration;
+  if(totalDuration <= 0) return gr;
 
-    const enter = getCurrentFromStep(enterVal, vectors);
-    const exit = getCurrentFromStep(exitVal, vectors);
+  const map = (val: number, min: number, max: number) => {
+    let res = (val - min) / (max - min);
+    if(res < 0) res = 0;
+    if(res > 1) res = 1;
+    return res;
+  }
+  
+  const draw = (t: number|number[]) => {
+    const current = t as number * totalDuration
+    const enterT = map(current, 0, enter.duration);
+    const exitT = map(current, enter.duration + exit.delay!, totalDuration);
+
+    const enterVal = enterT * totalLength;
+    const exitVal = exitT * totalLength;
+
+    const enterTip = getCurrentFromStep(enterVal, vectors);
+    const exitTip = getCurrentFromStep(exitVal, vectors);
 
     // list of vectors to draw
     const line = [
-      exit.pos,
-      ...vectors.slice(exit.index, enter.index),
-      enter.pos
+      exitTip.pos,
+      ...vectors.slice(exitTip.index, enterTip.index),
+      enterTip.pos
     ];
     gr.clear();
     gr.lineStyle(3, 0xffff00);
@@ -38,6 +58,7 @@ export const interpolateLine = (gr: Graphics, { vectors, enter: doEnter = true, 
 
   setInterpolation({
     frames: [{value: 0}, {value: 1}],
+    duration: totalDuration,
     onChange: draw,
     ...options
   });

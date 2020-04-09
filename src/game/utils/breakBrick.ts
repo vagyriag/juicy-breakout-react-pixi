@@ -116,8 +116,13 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   const gr = new Graphics();
   interpolateLine(gr, {
     vectors: lightning,
-    duration: 2000,
-    easingFunction: Ease.in(2),
+    enter: {
+      duration: 900,
+    },
+    exit: {
+      duration: 900,
+      delay: -200,
+    },
     onFinish: () => 
       setTimeout(() => {
         app.stage.removeChild(gr);
