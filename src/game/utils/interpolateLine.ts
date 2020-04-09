@@ -6,16 +6,26 @@ interface Options extends Omit<InterpolationOptions, 'frames'|'onChange'|'durati
   vectors: Vector[];
   enter?: {
     duration: number;
+    easingFunction?: InterpolationOptions['easingFunction'];
   };
   exit?: {
     duration: number;
     delay?: number;
+    easingFunction?: InterpolationOptions['easingFunction'];
   };
+  line: {
+    color: number,
+    width: number,
+  }
 }
 
-export const interpolateLine = (gr: Graphics, { vectors, enter = { duration: 0 }, exit = { duration: 0 }, ...options }: Options) => {
-  // default delay
-  if(typeof exit.delay !== 'number') exit.delay = 0;
+export const interpolateLine = (gr: Graphics, { vectors, line, enter = { duration: 0 }, exit = { duration: 0 }, ...options }: Options) => {
+  // defaults
+  if(enter.duration < 0) enter.duration = 0;
+  if(exit.duration < 0) exit.duration = 0;
+  if(typeof exit.delay !== 'number' || exit.delay < enter.duration) exit.delay = 0;
+  if(!enter.easingFunction) enter.easingFunction = t => t;
+  if(!exit.easingFunction) exit.easingFunction = t => t;
 
   // total line length
   const totalLength = vectors.slice(1).reduce((acc, curr, index) => {
@@ -37,21 +47,21 @@ export const interpolateLine = (gr: Graphics, { vectors, enter = { duration: 0 }
     const enterT = map(current, 0, enter.duration);
     const exitT = map(current, enter.duration + exit.delay!, totalDuration);
 
-    const enterVal = enterT * totalLength;
-    const exitVal = exitT * totalLength;
+    const enterVal = enter.easingFunction!(enterT) * totalLength;
+    const exitVal = exit.easingFunction!(exitT) * totalLength;
 
     const enterTip = getCurrentFromStep(enterVal, vectors);
     const exitTip = getCurrentFromStep(exitVal, vectors);
 
     // list of vectors to draw
-    const line = [
+    const lineVectors = [
       exitTip.pos,
       ...vectors.slice(exitTip.index, enterTip.index),
       enterTip.pos
     ];
     gr.clear();
-    gr.lineStyle(3, 0xffff00);
-    line.forEach((pt, i) => {
+    gr.lineStyle(line.width, line.color);
+    lineVectors.forEach((pt, i) => {
       gr[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
     });
   }
