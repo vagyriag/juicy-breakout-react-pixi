@@ -31,6 +31,7 @@ export const settings = {
     angles: false,
     brickBreak: false,
     lightnings: false,
+    curve: true,
     autoStart: true,
   }
 }

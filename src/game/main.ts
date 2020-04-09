@@ -18,6 +18,7 @@ import { setupBreakBrickTest } from './tests/setupBreakBrickTest';
 import { setupInterpolationTest } from './tests/setupInterpolationTest';
 import { breakBrick } from './utils/breakBrick';
 import { setupLightningsTest } from './tests/setupLightningsTest';
+import { setupCurveTest } from './tests/setupCurveTest';
 
 export const initGame = () => {
 
@@ -210,6 +211,8 @@ export const initGame = () => {
     setupInterpolationTest();
   } else if(settings.test.lightnings){
     setupLightningsTest(app);
+  } else if(settings.test.curve){
+    setupCurveTest(app);
   } else {
     setup();
   }
