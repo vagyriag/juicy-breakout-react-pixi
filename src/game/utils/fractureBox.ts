@@ -1,6 +1,5 @@
 import { Rectangle } from "pixi.js";
 import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
-import { getBoxLineIntersections } from "./getBoxLineIntersections";
 import { divideLineInPoints } from "./divideLineInPoints";
 import { Vector } from "./Vector";
 
