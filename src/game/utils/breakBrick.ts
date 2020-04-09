@@ -49,7 +49,7 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   // sideA (top or right)
   const grA = new Graphics();
   const globalA = new Vector(objA.getGlobalPosition());
-  grA.beginFill(0xff0000);
+  grA.beginFill(0xcc11cc);
   sideA.forEach((pt, i) => {
     pt = new Vector(pt).sub(globalA);
     grA[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
@@ -70,7 +70,7 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
       }
     ],
     duration: 300,
-    delay: 100,
+    delay: 200,
     easingFunction: Ease.inOut(2),
     onFinish: () => {
       app.stage.removeChild(grA);
@@ -81,7 +81,7 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   // sideB (bottom or left)
   const grB = new Graphics();
   const globalB = new Vector(objA.getGlobalPosition());
-  grB.beginFill(0x0000ff);
+  grB.beginFill(0xcc11cc);
   sideB.forEach((pt, i) => {
     pt = new Vector(pt).sub(globalB);
     grB[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
@@ -102,7 +102,7 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
       }
     ],
     duration: 300,
-    delay: 100,
+    delay: 200,
     easingFunction: Ease.inOut(2),
     onFinish: () => {
       app.stage.removeChild(grB);
@@ -117,24 +117,30 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   interpolateLine(gr, {
     vectors: lightning,
     enter: {
-      duration: 900,
+      duration: 200,
+      easingFunction: Ease.inOut(2),
     },
     exit: {
-      duration: 900,
-      delay: -200,
+      duration: 200,
+      delay: -50,
+      easingFunction: Ease.inOut(2),
     },
     onFinish: () => 
       setTimeout(() => {
         app.stage.removeChild(gr);
         gr.destroy();
-      }, 40)
+      }, 40),
+    line: {
+      width: 2,
+      color: 0xffff00,
+    }
   });
 
-  if(settings.brick.lightning) app.stage.addChild(gr);
   if(settings.brick.break){
     app.stage.addChild(grB);
     app.stage.addChild(grA);
   }
+  if(settings.brick.lightning) app.stage.addChild(gr);
 }
 
 const getPointsByTouch = (touch: isTouchingReturnType, vert: getBoxVerticesReturnType) => {
