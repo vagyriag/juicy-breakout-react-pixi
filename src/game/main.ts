@@ -14,7 +14,6 @@ import { pI } from './utils/pI';
 import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
 import particles from './utils/particles';
-import { setupFractureTest } from './utils/setupFractureTest';
 import { setupLightningTest } from './utils/setupLightningTest';
 import { setupInterpolationTest } from './utils/setupInterpolationTest';
 import { breakBrick } from './utils/breakBrick';
@@ -204,8 +203,6 @@ export const initGame = () => {
     setupAngleTest(app);
   } else if(settings.test.transition){
     setupTransitionTest(app);
-  } else if(settings.test.fracture){
-    setupFractureTest(app);
   } else if(settings.test.lightning){
     setupLightningTest(app);
   } else if(settings.test.interpolation){

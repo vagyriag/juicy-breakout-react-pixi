@@ -1,12 +1,8 @@
 import { Brick } from "../objects/Brick";
-import { Application, Graphics, interaction } from "pixi.js";
+import { Application, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
-import { fractureBox } from "./fractureBox";
-import { isTouching, isTouchingReturnType } from "../isTouching";
-import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
-import { Vector } from "./Vector";
-import { interpolateLine } from "./interpolateLine";
-import { Ease } from "./Ease";
+import { isTouching } from "../isTouching";
+import { breakBrick } from "./breakBrick";
 
 export const setupLightningTest = (app: Application) => {
   const { width, height } = app.view;
@@ -39,41 +35,8 @@ export const setupLightningTest = (app: Application) => {
 
     if(!touch) return;
     
-    const bounds = objA.getBounds();
-    const vertices = getBoxVertices(bounds);
-    
-    const [ pointA, pointB ] = getPointsByTouch(touch, vertices);
-    const points = fractureBox(vertices, pointA, pointB);
-    
-    if(points){
-      const extra = Vector.sub(pointB, pointA).mult(.7).add(pointB);
-      const lightning = [ ...points.fracture, extra ];
-
-      const gr = new Graphics();
-      interpolateLine(gr, {
-        vectors: lightning,
-        duration: 200,
-        easingFunction: Ease.in(2),
-        onFinish: () => 
-          setTimeout(() => {
-            app.stage.removeChild(gr);
-            gr.destroy();
-          }, 40)
-      });
-      app.stage.addChild(gr);
-    }
+    breakBrick(app, touch, objA, objB);
   }
 
   app.stage.on('click', process);
-}
-
-
-const getPointsByTouch = (touch: isTouchingReturnType, vert: getBoxVerticesReturnType) => {
-  const rA = Math.random() * .4 + .3;
-  const rB = Math.random() * .4 + .3;
-
-  if(touch.top) return [ vert.lt.lerp(vert.rt, rA), vert.lb.lerp(vert.rb, rB) ];
-  if(touch.right) return [ vert.rt.lerp(vert.rb, rA), vert.lt.lerp(vert.lb, rB) ];
-  if(touch.bottom) return [ vert.lb.lerp(vert.rb, rA), vert.lt.lerp(vert.rt, rB) ];
-  return [ vert.lt.lerp(vert.lb, rA), vert.rt.lerp(vert.rb, rB) ];
 }

@@ -76,4 +76,12 @@ export class Vector extends p5Vector implements IPoint {
     if(a instanceof Vector) return super.lerp(a, b);
     return super.lerp(a, b, c, d);
   }
+  copy(): Vector{
+    return new Vector(this);
+  }
+  sub(x: number, y?: number | undefined, z?: number | undefined): Vector;
+  sub(value: Vector | number[]): Vector;
+  sub(...params: any[]): Vector {
+    return super.sub(params[0], params[1], params[2]) as Vector;
+  }
 }

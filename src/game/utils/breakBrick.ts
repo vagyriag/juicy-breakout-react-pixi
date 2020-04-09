@@ -1,43 +1,144 @@
 import { DisplayObject, Graphics, Application } from "pixi.js";
 import { getBoxVertices, getBoxVerticesReturnType } from "./getBoxVertices";
-import { fractureBox } from "./fractureBox";
 import { Vector } from "./Vector";
 import { interpolateLine } from "./interpolateLine";
 import { Ease } from "./Ease";
 import { isTouchingReturnType } from "../isTouching";
+import { setTransition } from "./setTransition";
 
 export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: DisplayObject, objB: DisplayObject) => {
   const bounds = objA.getBounds();
   const vertices = getBoxVertices(bounds);
   
   const [ pointA, pointB ] = getPointsByTouch(touch, vertices);
-  const points = fractureBox(vertices, pointA, pointB);
-  
-  if(points){
-    const extra = Vector.sub(pointB, pointA).mult(.7).add(pointB);
-    const lightning = [ ...points.fracture, extra ];
+  const newPoints = [
+    new Vector(pointA).lerp(pointB, .33),
+    new Vector(pointA).lerp(pointB, .66),
+  ];
 
-    const gr = new Graphics();
-    interpolateLine(gr, {
-      vectors: lightning,
-      duration: 200,
-      easingFunction: Ease.in(2),
-      onFinish: () => 
-        setTimeout(() => {
-          app.stage.removeChild(gr);
-          gr.destroy();
-        }, 40)
-    });
-    app.stage.addChild(gr);
+  newPoints.forEach((point) => {
+    point.add(Vector.random2D().mult(bounds.height * .3));
+  });
+  const fracture = [ pointA, ...newPoints, pointB ];
+  
+  const sideA = fracture.slice();
+  const sideB = fracture.slice();
+
+  const fromLR = touch.left || touch.right;
+  const fromTB = touch.top || touch.bottom;
+
+  if(touch.bottom || touch.right) {
+    sideA.reverse();
+    sideB.reverse();
   }
+
+  if(fromTB){
+    sideA.push(vertices.rb, vertices.rt);
+    sideB.push(vertices.lb, vertices.lt);
+  }
+
+  if(fromLR){
+    sideA.push(vertices.rt, vertices.lt);
+    sideB.push(vertices.rb, vertices.lb);
+  }
+
+  const movBg = 100;
+  const movSm = 40;
+
+  // sideA (top or right)
+  const grA = new Graphics();
+  const globalA = new Vector(objA.getGlobalPosition());
+  grA.beginFill(0xff0000);
+  sideA.forEach((pt, i) => {
+    pt = new Vector(pt).sub(globalA);
+    grA[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
+  });
+  grA.closePath();
+  grA.endFill();
+  app.stage.addChild(grA);
+  const rA = Math.random() - .5;
+  grA.position.copyFrom(globalA);
+  setTransition(grA, {
+    frames: [
+      {
+        position: new Vector(grA),
+        rotation: 0,
+      },
+      {
+        position: new Vector(grA).add(fromLR ? new Vector(rA * movSm, movBg * -1) : new Vector(movBg, rA * movSm)),
+        rotation: rA,
+      }
+    ],
+    duration: 300,
+    delay: 100,
+    easingFunction: Ease.inOut(2),
+    onFinish: () => {
+      app.stage.removeChild(grA);
+      grA.destroy();
+    }
+  });
+
+  // sideB (bottom or left)
+  const grB = new Graphics();
+  const globalB = new Vector(objA.getGlobalPosition());
+  grB.beginFill(0x0000ff);
+  sideB.forEach((pt, i) => {
+    pt = new Vector(pt).sub(globalB);
+    grB[i === 0 ? 'moveTo' : 'lineTo'](pt.x, pt.y);
+  });
+  grB.closePath();
+  grB.endFill();
+  app.stage.addChild(grB);
+  const rB = Math.random() - .5;
+  grB.position.copyFrom(globalA);
+  setTransition(grB, {
+    frames: [
+      {
+        position: new Vector(grB),
+        rotation: 0,
+      },
+      {
+        position: new Vector(grB).add(fromLR ? new Vector(rB * movSm, movBg * 1) : new Vector(movBg * -1, rB * movSm)),
+        rotation: rB,
+      }
+    ],
+    duration: 300,
+    delay: 100,
+    easingFunction: Ease.inOut(2),
+    onFinish: () => {
+      app.stage.removeChild(grB);
+      grB.destroy();
+    }
+  });
+
+  // lightning
+  const extra = Vector.sub(pointB, pointA).mult(.7).add(pointB);
+  const lightning = [ ...fracture, extra ];
+  const gr = new Graphics();
+  interpolateLine(gr, {
+    vectors: lightning,
+    duration: 200,
+    easingFunction: Ease.in(2),
+    onFinish: () => 
+      setTimeout(() => {
+        app.stage.removeChild(gr);
+        gr.destroy();
+      }, 40)
+  });
+  app.stage.addChild(gr);
 }
 
 const getPointsByTouch = (touch: isTouchingReturnType, vert: getBoxVerticesReturnType) => {
   const rA = Math.random() * .4 + .3;
   const rB = Math.random() * .4 + .3;
 
-  if(touch.top) return [ vert.lt.lerp(vert.rt, rA), vert.lb.lerp(vert.rb, rB) ];
-  if(touch.right) return [ vert.rt.lerp(vert.rb, rA), vert.lt.lerp(vert.lb, rB) ];
-  if(touch.bottom) return [ vert.lb.lerp(vert.rb, rA), vert.lt.lerp(vert.rt, rB) ];
-  return [ vert.lt.lerp(vert.lb, rA), vert.rt.lerp(vert.rb, rB) ];
+  const lt = vert.lt.copy();
+  const rt = vert.rt.copy();
+  const lb = vert.lb.copy();
+  const rb = vert.rb.copy();
+
+  if(touch.top) return [ lt.lerp(rt, rA), lb.lerp(rb, rB) ];
+  if(touch.bottom) return [ lb.lerp(rb, rA), lt.lerp(rt, rB) ];
+  if(touch.right) return [ rt.lerp(rb, rA), lt.lerp(lb, rB) ];
+  return [ lt.lerp(lb, rA), rt.lerp(rb, rB) ];
 }
