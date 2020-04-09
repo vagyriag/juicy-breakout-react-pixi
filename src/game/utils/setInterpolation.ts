@@ -10,6 +10,7 @@ export interface InterpolationOptions {
   onChange: (value: number|number[]) => void;
   delay?: number;
   autoStart?: boolean;
+  autoInit?: boolean;
   easingFunction?: (t: number) => number;
   onFinish?: () => void;
 }
@@ -20,7 +21,7 @@ export interface Interpolation {
 
 export const setInterpolation = (options: InterpolationOptions): Interpolation => {
 
-  const { duration, delay, autoStart = true, frames, onFinish, onChange } = options;
+  const { duration, delay, frames, onFinish, onChange, autoStart = true, autoInit = true } = options;
   const easingFunction = options.easingFunction || ((t) => t);
 
   const resIsNum = typeof frames[0].value === 'number';
@@ -35,6 +36,8 @@ export const setInterpolation = (options: InterpolationOptions): Interpolation =
   const initialProcessing = () => {
     // calculate time for steps
     calculateStepTimes();
+
+    if(autoInit) onChange(frames[0].value);
 
     // start if has delay or autoStart
     if((delay && delay > 0 && autoStart === true) || autoStart) {
