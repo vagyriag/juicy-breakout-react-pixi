@@ -5,6 +5,7 @@ import { interpolateLine } from "./interpolateLine";
 import { Ease } from "./Ease";
 import { isTouchingReturnType } from "../isTouching";
 import { setTransition } from "./setTransition";
+import { settings } from "./settings";
 
 export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: DisplayObject, objB: DisplayObject) => {
   const bounds = objA.getBounds();
@@ -55,7 +56,6 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   });
   grA.closePath();
   grA.endFill();
-  app.stage.addChild(grA);
   const rA = Math.random() - .5;
   grA.position.copyFrom(globalA);
   setTransition(grA, {
@@ -88,7 +88,6 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   });
   grB.closePath();
   grB.endFill();
-  app.stage.addChild(grB);
   const rB = Math.random() - .5;
   grB.position.copyFrom(globalA);
   setTransition(grB, {
@@ -117,7 +116,7 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
   const gr = new Graphics();
   interpolateLine(gr, {
     vectors: lightning,
-    duration: 200,
+    duration: 2000,
     easingFunction: Ease.in(2),
     onFinish: () => 
       setTimeout(() => {
@@ -125,7 +124,12 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
         gr.destroy();
       }, 40)
   });
-  app.stage.addChild(gr);
+
+  if(settings.brick.lightning) app.stage.addChild(gr);
+  if(settings.brick.break){
+    app.stage.addChild(grB);
+    app.stage.addChild(grA);
+  }
 }
 
 const getPointsByTouch = (touch: isTouchingReturnType, vert: getBoxVerticesReturnType) => {

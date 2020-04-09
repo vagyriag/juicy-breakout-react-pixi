@@ -4,6 +4,8 @@ export const settings = {
     wobble: true,
     sound: false,
     color: true,
+    break: false,
+    lightning: true,
   },
   paddle: {
     transition: true,
@@ -27,7 +29,7 @@ export const settings = {
     interpolation: false,
     transition: false,
     angles: false,
-    lightning: false,
+    lightning: true,
     autoStart: true,
   }
 }
