@@ -19,6 +19,7 @@ import { setupInterpolationTest } from './tests/setupInterpolationTest';
 import { breakBrick } from './utils/breakBrick';
 import { setupLightningsTest } from './tests/setupLightningsTest';
 import { setupCurveTest } from './tests/setupCurveTest';
+import { Side } from './objects/Side';
 
 export const initGame = () => {
 
@@ -147,6 +148,7 @@ export const initGame = () => {
         ball.bounce(touch, side);
         wobbleBricks();
         sound.wall();
+        if(settings.wall.curve && side instanceof Side) side.curveByTouch(touch, new Vector(ball));
       }
     });
   }

@@ -21,6 +21,7 @@ export const settings = {
   },
   wall: {
     sound: false,
+    curve: true,
   },
   general: {
     music: false,
@@ -31,7 +32,7 @@ export const settings = {
     angles: false,
     brickBreak: false,
     lightnings: false,
-    curve: true,
+    curve: false,
     autoStart: true,
   }
 }
