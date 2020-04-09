@@ -2,7 +2,7 @@ import { Brick } from "../objects/Brick";
 import { Application, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
 import { isTouching } from "../isTouching";
-import { breakBrick } from "./breakBrick";
+import { breakBrick } from "../utils/breakBrick";
 
 export const setupBreakBrickTest = (app: Application) => {
   const { width, height } = app.view;

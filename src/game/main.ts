@@ -8,16 +8,16 @@ import { setTransition } from './utils/setTransition';
 import { Vector } from './utils/Vector';
 import { Ease } from './utils/Ease';
 import { settings } from './utils/settings';
-import { setupAngleTest } from './utils/setupAngleTest';
-import { setupTransitionTest } from './utils/setupTransitionTest';
+import { setupAngleTest } from './tests/setupAngleTest';
+import { setupTransitionTest } from './tests/setupTransitionTest';
 import { pI } from './utils/pI';
 import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
 import particles from './utils/particles';
-import { setupBreakBrickTest } from './utils/setupBreakBrickTest';
-import { setupInterpolationTest } from './utils/setupInterpolationTest';
+import { setupBreakBrickTest } from './tests/setupBreakBrickTest';
+import { setupInterpolationTest } from './tests/setupInterpolationTest';
 import { breakBrick } from './utils/breakBrick';
-import { setupLightningsTest } from './utils/setupLightningsTest';
+import { setupLightningsTest } from './tests/setupLightningsTest';
 
 export const initGame = () => {
 

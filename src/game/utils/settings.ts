@@ -30,7 +30,7 @@ export const settings = {
     transition: false,
     angles: false,
     brickBreak: false,
-    lightnings: true,
+    lightnings: false,
     autoStart: true,
   }
 }

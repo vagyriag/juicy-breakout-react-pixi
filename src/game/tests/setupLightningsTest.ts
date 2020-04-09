@@ -1,7 +1,7 @@
 import { Application, Graphics } from "pixi.js";
-import { Vector } from "./Vector";
-import { interpolateLine } from "./interpolateLine";
-import { Ease } from "./Ease";
+import { Vector } from "../utils/Vector";
+import { interpolateLine } from "../utils/interpolateLine";
+import { Ease } from "../utils/Ease";
 import { setInterval } from "timers";
 import chroma from 'chroma-js';
 

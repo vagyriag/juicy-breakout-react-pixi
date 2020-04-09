@@ -1,8 +1,8 @@
 import { Application } from "pixi.js";
 import { Ball } from "../objects/Ball";
-import { setTransition } from "./setTransition";
-import { Vector } from "./Vector";
-import { Ease } from "./Ease";
+import { setTransition } from "../utils/setTransition";
+import { Vector } from "../utils/Vector";
+import { Ease } from "../utils/Ease";
 
 export const setupTransitionTest = (app: Application) => {
   const { width, height } = app.view;

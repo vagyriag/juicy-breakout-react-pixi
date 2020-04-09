@@ -1,8 +1,8 @@
 import { Brick } from "../objects/Brick";
 import { Application, Graphics, TextStyle, Text, interaction } from "pixi.js";
 import { Ball } from "../objects/Ball";
-import { Vector } from "./Vector";
-import { pI } from "./pI";
+import { Vector } from "../utils/Vector";
+import { pI } from "../utils/pI";
 import { getTouchingSidesInfo } from "../isTouching";
 
 export const setupAngleTest = (app: Application) => {

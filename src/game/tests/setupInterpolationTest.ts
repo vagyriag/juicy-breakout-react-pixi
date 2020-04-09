@@ -1,5 +1,5 @@
-import { Ease } from "./Ease";
-import { setInterpolation } from "./setInterpolation";
+import { Ease } from "../utils/Ease";
+import { setInterpolation } from "../utils/setInterpolation";
 
 export const setupInterpolationTest = () => {
   const div = document.createElement('div');
