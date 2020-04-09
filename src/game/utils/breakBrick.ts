@@ -125,11 +125,10 @@ export const breakBrick = (app: Application, touch: isTouchingReturnType, objA: 
       delay: -50,
       easingFunction: Ease.inOut(2),
     },
-    onFinish: () => 
-      setTimeout(() => {
-        app.stage.removeChild(gr);
-        gr.destroy();
-      }, 40),
+    onFinish: () => {
+      app.stage.removeChild(gr);
+      gr.destroy();
+    },
     line: {
       width: 2,
       color: 0xffff00,

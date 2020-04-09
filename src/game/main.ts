@@ -14,9 +14,10 @@ import { pI } from './utils/pI';
 import { sound } from './utils/sound';
 import { Brick } from './objects/Brick';
 import particles from './utils/particles';
-import { setupLightningTest } from './utils/setupLightningTest';
+import { setupBreakBrickTest } from './utils/setupBreakBrickTest';
 import { setupInterpolationTest } from './utils/setupInterpolationTest';
 import { breakBrick } from './utils/breakBrick';
+import { setupLightningsTest } from './utils/setupLightningsTest';
 
 export const initGame = () => {
 
@@ -203,10 +204,12 @@ export const initGame = () => {
     setupAngleTest(app);
   } else if(settings.test.transition){
     setupTransitionTest(app);
-  } else if(settings.test.lightning){
-    setupLightningTest(app);
+  } else if(settings.test.brickBreak){
+    setupBreakBrickTest(app);
   } else if(settings.test.interpolation){
     setupInterpolationTest();
+  } else if(settings.test.lightnings){
+    setupLightningsTest(app);
   } else {
     setup();
   }

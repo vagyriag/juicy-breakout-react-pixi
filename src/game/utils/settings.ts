@@ -29,7 +29,8 @@ export const settings = {
     interpolation: false,
     transition: false,
     angles: false,
-    lightning: false,
+    brickBreak: false,
+    lightnings: true,
     autoStart: true,
   }
 }

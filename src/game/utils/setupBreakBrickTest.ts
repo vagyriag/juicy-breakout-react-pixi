@@ -4,7 +4,7 @@ import { Ball } from "../objects/Ball";
 import { isTouching } from "../isTouching";
 import { breakBrick } from "./breakBrick";
 
-export const setupLightningTest = (app: Application) => {
+export const setupBreakBrickTest = (app: Application) => {
   const { width, height } = app.view;
   
   Brick.createTexture(app, 0xcc11cc, 200, 50);
