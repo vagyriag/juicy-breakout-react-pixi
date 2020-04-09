@@ -2,7 +2,7 @@ import { Ticker } from "pixi.js";
 import { pI } from "./pI"; 
 
 export interface InterpolationOptions {
-  frames: {
+  frames?: {
     time?: number;
     value: number|number[];
   }[];
@@ -21,8 +21,9 @@ export interface Interpolation {
 
 export const setInterpolation = (options: InterpolationOptions): Interpolation => {
 
-  const { duration, delay, frames, onFinish, onChange, autoStart = true, autoInit = true } = options;
+  const { duration, delay, onFinish, onChange, autoStart = true, autoInit = true } = options;
   const easingFunction = options.easingFunction || ((t) => t);
+  const frames = options.frames || [ { value: 0 }, { value: 1 } ];
 
   const resIsNum = typeof frames[0].value === 'number';
 
