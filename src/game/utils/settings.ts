@@ -32,7 +32,7 @@ export const settings = {
     angles: false,
     brickBreak: false,
     lightnings: false,
-    curve: false,
+    curve: true,
     autoStart: true,
   }
 }

@@ -83,14 +83,6 @@ export class Ball extends Sprite implements withTouchTransform {
   process(paddle: Paddle, touch: isTouchingReturnType|false, bounced: boolean) {
     if(!this.inStage) return;
 
-    if(this.texture === Ball.txBounce){
-      const diff = Date.now() - this.lastTouchedTime;
-      if(diff > Ball.bounceTextureDuration) this.texture = Ball.tx;
-    }
-
-    if(settings.ball.scale) this.scale.set(1.5, 1);
-    if(settings.ball.rotation) this.rotation = this.vel.heading();
-
     if(touch && touch.top && bounced){
       const maxAngMod = Math.PI * .1;
       const maxDiff = paddle.getBounds(true).width * .5 + this.getBounds(true).width * .5;
@@ -112,7 +104,19 @@ export class Ball extends Sprite implements withTouchTransform {
 
       if(this.logAngles) console.log('final: ', Math.round(pI.degrees(this.vel.heading())), Math.round(minAng * 180/Math.PI), Math.round(maxAng * 180/Math.PI));
     }
-    
+  }
+
+  move() {
+    if(!this.inStage) return;
+
+    if(settings.ball.scale) this.scale.set(1.5, 1);
+    if(settings.ball.rotation) this.rotation = this.vel.heading();
+
+    if(this.texture === Ball.txBounce){
+      const diff = Date.now() - this.lastTouchedTime;
+      if(diff > Ball.bounceTextureDuration) this.texture = Ball.tx;
+    }
+
     this.position.set(...new Vector(this.position).add(this.vel).array());
   }
 

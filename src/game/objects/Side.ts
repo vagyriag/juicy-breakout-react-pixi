@@ -1,4 +1,4 @@
-import { Sprite, Graphics, Rectangle, Application } from "pixi.js";
+import { Sprite, Graphics, Rectangle } from "pixi.js";
 import { isTouchingReturnType } from "../isTouching";
 import { Vector } from "../utils/Vector";
 import { getBoxVertices } from "../utils/getBoxVertices";
@@ -10,11 +10,14 @@ export class Side extends Sprite {
 
   gr = new Graphics();
   curve = new Graphics();
+  _color: number;
 
   constructor(color: number, x: number, y: number, width: number, height: number){
     super();
+    this._color = color;
 
-    this.gr.beginFill(color)
+    this.gr.beginFill(this._color)
+      .lineStyle(0)
       .drawRect(x, y, width, height)
       .endFill();
     this.gr.cacheAsBitmap = true;
@@ -73,7 +76,8 @@ export class Side extends Sprite {
         if(touch.left) cp.x -= val;
         if(touch.right) cp.x += val;
         this.curve.clear()
-          .beginFill(0xff1100)
+          .lineStyle()
+          .beginFill(this._color)
           .moveTo(touchLine[0].x, touchLine[0].y)
           .quadraticCurveTo(cp.x, cp.y, touchLine[1].x, touchLine[1].y)
           .endFill();

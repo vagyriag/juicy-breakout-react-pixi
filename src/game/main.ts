@@ -128,6 +128,7 @@ export const initGame = () => {
     }
 
     ball.process(paddle, touch, bounce);
+    ball.move();
 
     bricks.children.some(brick => {
       if(brick instanceof Brick) brick.process();
